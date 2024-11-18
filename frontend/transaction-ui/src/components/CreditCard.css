@@ -1,0 +1,155 @@
+/* src/components/CreditCard.css */
+:root {
+    --card-icon-size: 15px; /* Default icon size, can be adjusted */
+}
+
+.credit-card {
+    background: linear-gradient(135deg, #0a7b9d 30%, #e0e0e0 100%); /* Light gradient for card background */
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
+    padding: 20px;
+    margin: 10px;
+    width: 350px; /* Standard card size */
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Positioning for absolute elements */
+    color: #1b1616; /* Default text color */
+    
+}
+
+.card-icon {
+    width: var(--card-icon-size); /* Use the CSS variable for icon size */
+    height: small; /* Maintain aspect ratio */
+    position: absolute; /* Absolute positioning */
+    top: 15px; /* Centered vertically */
+    left: 15px; /* Adjust horizontal position */
+    z-index: 1; /* Ensure visibility above other elements */
+}
+
+.card-number {
+    font-size: 1.5em; /* Increased font size for card number */
+    letter-spacing: 2px; /* Spacing for card number */
+    margin: 40px 0 10px; /* Margin for top space and bottom */
+    text-align: center; /* Center the card number */
+    font-family: 'Courier New', Courier, monospace; /* Monospaced font for a card look */
+    color: #e0e0e0;
+    font-weight: bold;
+}
+
+/* Card container for expiry and CVV */
+.card-info {
+    display: flex; /* Use flexbox to layout expiry and CVV */
+    justify-content: space-between; /* Space between elements */
+    align-items: center; /* Center align items vertically */
+    margin: 10px 0; /* Margin for spacing between the card-info and other elements */
+}
+
+.expiry {
+    font-size: 1em; /* Font size for expiry date */
+    margin: 0; /* Remove margin for better alignment */
+    font-family: 'Courier New', Courier, monospace; /* Font family */
+    color: #e0e0e0; /* Text color */
+    font-weight: bold; /* Bold text */
+}
+
+.cvv-container {
+    display: flex; /* Flex container for CVV text and button */
+    align-items: center; /* Center align items vertically */
+}
+
+.cvv {
+    font-size: 1em; /* Font size for CVV */
+    margin: 0; /* Remove margin for better alignment */
+    font-family: 'Courier New', Courier, monospace; /* Font family */
+    color: #e0e0e0; /* Text color */
+    font-weight: bold; /* Bold text */
+}
+
+.show-cvv-button {
+    margin-left: 10px; /* Space between button and CVV text */
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.show-cvv-button:hover {
+    background-color: #00b33f; /* Darker shade on hover */
+}
+
+/* Card footer for additional information */
+.card-footer {
+    display: flex;
+    justify-content: flex-start; /* Aligns content to the start (left) */
+    align-items: flex-start; /* Aligns items at the top */
+    padding: 10px; /* Optional: add some padding */
+    color: white;
+    font-weight: bold;
+}
+
+.cardholder-name {
+    margin: 10px 0; /* Margin for spacing */
+    text-align: left; /* Align name to the left */
+    font-size: 16px; /* Include units for font size */
+    
+    font-weight: bold; /* Use font-weight for bold text */
+    font-family: 'Courier New', Courier, monospace; /* Font family */
+}
+
+
+.card-info {
+    display: flex; /* Flexbox for layout */
+    justify-content: space-between; /* Space between expiry and CVV */
+    align-items: center; /* Align items vertically */
+    margin-top: 10px; /* Margin for spacing */
+}
+
+.card-icon {
+    width: 30px; /* Adjusted width for better visibility */
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 10px; /* Space below the icon */
+}
+
+
+.card-type {
+    position: absolute; /* Ensure icon is positioned correctly */
+    top: 15px; /* Adjust as needed */
+    left: 15px; /* Adjust as needed */
+    width: 30px; /* Set the width for the icon */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.card-container {
+    display: flex; /* Use flexbox for layout */
+    overflow-x: small; /* Allow horizontal scrolling if needed */
+    padding: 20px; /* Padding around the container */
+    gap: 20px; /* Space between cards */
+}
+
+.credit-card:hover {
+    transform: scale(1.09); /* Slightly scale card on hover */
+}
+
+
+.card-status {
+    font-size: 1em; /* Font size for card status */
+    margin: 0; /* Remove margin for better alignment */
+    font-family: 'Courier New', Courier, monospace; /* Font family */
+    color: #e0e0e0; /* Text color */
+    font-weight: bold; /* Bold text */
+    position: absolute; /* Positioning context for absolute positioning */
+    bottom: 10px; /* 10 pixels from the bottom */
+    right: 10px; /* 10 pixels from the right */
+    padding: 5px; /* Optional padding */
+    border-radius: 5px; /* Optional rounded corners */
+   
+}
+
+.toggle-transactions-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+
