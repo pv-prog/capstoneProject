@@ -9,7 +9,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Softer shadow for depth */
     padding: 20px;
     margin: 10px;
-    width: 350px; /* Standard card size */
+    width: 450px; /* Standard card size */
     display: flex;
     flex-direction: column;
     position: relative; /* Positioning for absolute elements */
@@ -76,6 +76,17 @@
     transition: background-color 0.3s ease; /* Smooth transition */
 }
 
+.toggle-status-button {
+    margin-left: 10px; /* Space between button and CVV text */
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
 .show-cvv-button:hover {
     background-color: #00b33f; /* Darker shade on hover */
 }
@@ -116,17 +127,17 @@
 
 .card-type {
     position: absolute; /* Ensure icon is positioned correctly */
-    top: 15px; /* Adjust as needed */
-    left: 15px; /* Adjust as needed */
+    top: 20px; /* Adjust as needed */
+    left: 20px; /* Adjust as needed */
     width: 30px; /* Set the width for the icon */
     height: auto; /* Maintain aspect ratio */
 }
 
 .card-container {
     display: flex; /* Use flexbox for layout */
-    overflow-x: small; /* Allow horizontal scrolling if needed */
-    padding: 20px; /* Padding around the container */
-    gap: 20px; /* Space between cards */
+    overflow-x: medium; /* Allow horizontal scrolling if needed */
+    padding: 30px; /* Padding around the container */
+    gap: 10px; /* Space between cards */
 }
 
 .credit-card:hover {

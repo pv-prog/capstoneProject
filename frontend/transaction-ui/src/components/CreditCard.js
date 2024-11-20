@@ -46,23 +46,29 @@ const getRandomGradient = (cardType) => {
 };
 
 
-const CreditCard = ({ card, userId, onToggleTransactions, showTransactions }) => {
+const CreditCard = ({ card, onToggleTransactions, showTransactions }) => {
     const [showCvv, setShowCvv] = useState(false);
+    const [isActive, setIsActive] = useState(card.status === 'active'); // Initialize based on card status
+
     const handleToggleCvv = (e) => {
         e.stopPropagation();
         setShowCvv(!showCvv);
     };
 
+    const handleToggleStatus = () => {
+        setIsActive(!isActive); // Toggle active status
+    };
+
     const gradientBackground = getRandomGradient(card.cardType);
     const cardholderName = getNameOnCard(users, card.cardNumber);
-    const cardStatusBackground = card.status === 'active' ? 'green' : 'red';
+    const cardStatusBackground = isActive ? 'green' : 'red';
 
     return (
         <div className="credit-card" style={{ background: gradientBackground }}>
             <div className="card-details">
                 <img className="card-type" src={getCardIcon(card.cardType)} alt={card.cardType} />
                 <div className="card-status" style={{ backgroundColor: cardStatusBackground }}>
-                    {card.status}
+                    {isActive ? 'Active' : 'Disabled'}
                 </div>
                 <p className="card-number">{card.cardNumber}</p>
                 <div className="card-info">
@@ -82,8 +88,14 @@ const CreditCard = ({ card, userId, onToggleTransactions, showTransactions }) =>
                 <button onClick={() => onToggleTransactions(card)} className="toggle-transactions-button">
                     {showTransactions ? 'Hide Transactions' : 'Show Transactions'}
                 </button>
-                </div>
+                {/* Button to toggle card status */}
+                <button onClick={handleToggleStatus} className="toggle-status-button">
+                    {isActive ? 'Disable Card' : 'Activate Card'}
+                </button>
+            </div>
         </div>
     );
 };
+
+
 export default CreditCard;

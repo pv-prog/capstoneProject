@@ -64,3 +64,17 @@
     gap: 10px; /* Space between date inputs */
     margin-left: 10px; /* Space between dropdown and date inputs */
 }
+.download-button {
+    margin: 10px 0; /* Margin for spacing */
+    padding: 8px 12px; /* Padding for better appearance */
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.download-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
