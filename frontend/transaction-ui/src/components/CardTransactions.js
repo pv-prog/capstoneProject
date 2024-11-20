@@ -9,6 +9,7 @@ const CardTransactions = ({ transactions, cardNumber, cardType, cardStatus }) =>
     const [filterOption, setFilterOption] = useState('all'); // Default filter option
     const [customStartDate, setCustomStartDate] = useState('');
     const [customEndDate, setCustomEndDate] = useState('');
+    
 
     const applyFilter = useCallback(() => {
         let filtered = [...transactions]; // Start with all transactions
@@ -31,12 +32,6 @@ const CardTransactions = ({ transactions, cardNumber, cardType, cardStatus }) =>
             const sixMonthsAgo = new Date();
             sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
             filtered = filtered.filter(transaction => new Date(transaction.transactionDate) >= sixMonthsAgo);
-        } else if (filterOption === 'last10') {
-            // Filter for transactions in the last 10 days
-            filtered = filtered.filter(transaction => {
-                const transactionDate = new Date(transaction.transactionDate);
-                return transactionDate >= tenDaysAgo;
-            });
         } else if (filterOption === 'custom') {
             const startDate = new Date(customStartDate);
             const endDate = new Date(customEndDate);
@@ -73,6 +68,36 @@ const CardTransactions = ({ transactions, cardNumber, cardType, cardStatus }) =>
         }
     };
 
+    // Function to convert transactions to CSV and trigger download
+    const downloadCSV = () => {
+        const csvData = [
+            ['Transaction ID', 'Date','TransactionTime', 'TransactionType','Amount',], // CSV header
+            ...filteredTransactions.map(transaction => [
+                transaction.transactionId,
+                transaction.transactionDate,
+                transaction.transactionTime,
+                transaction.transactionType,
+                transaction.transactionAmount,
+              
+               
+                
+            ]),
+        ];
+
+        // Convert array of arrays into a CSV string
+        const csvContent = 'data:text/csv;charset=utf-8,' + 
+            csvData.map(e => e.join(',')).join('\n');
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `transactions_${cardNumber}.csv`);
+        document.body.appendChild(link); // Required for FF
+
+        link.click(); // This will download the data file
+        document.body.removeChild(link); // Clean up
+    };
+
     return (
         <div className="transactions-container">
             <h3>Transactions for {cardType} Card:</h3>
@@ -87,6 +112,7 @@ const CardTransactions = ({ transactions, cardNumber, cardType, cardStatus }) =>
                 onFilterChange={handleFilterChange} 
                 onCustomDateChange={handleCustomDateChange} // Pass handler for custom date change
             /> 
+            <button onClick={downloadCSV} className="download-button">Download Statement</button> {/* Download button */}
             <div className="transactions">
                 {filteredTransactions.map(transaction => (
                     <Transaction key={transaction.transactionId} transaction={transaction} />
