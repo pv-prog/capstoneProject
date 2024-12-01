@@ -2,7 +2,6 @@ package com.ccms.service.service.impl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +40,8 @@ public class TransactionServiceimpl implements TransactionService {
 	@Override
 	public Map<Integer, Double> getMaxExpensesForLastMonth(String username, String statusFilter) {
 
-		// Step 1: Retrieve all active credit cards for the user
+		
+		// Retrieve all active credit cards for the user
 
 		System.out.println("Entering getMaxExpensesForLastMonth");
 
@@ -62,11 +62,16 @@ public class TransactionServiceimpl implements TransactionService {
 			}
 		}).collect(Collectors.toList());
 
-		// Step 2: Initialize a map to hold the maximum expenses for each card
+		// Fetch all the transactions of all current credit card for user
+
+		List<CreditCardTransaction> cardTransactions = transactionRepository.findByUsername(username).getCreditcards()
+				.stream().collect(Collectors.toList());
+
+		// Initialize a map to hold the maximum expenses for each card
 
 		Map<Integer, List<TransactionDetail>> allTransactionDetails = new HashMap<>();
 
-		// Step 3: Retrieve transactions for each active credit card
+		// Retrieve transactions for each active credit card
 
 		System.out.println("Retrieve transactions for each active credit card");
 
@@ -74,24 +79,12 @@ public class TransactionServiceimpl implements TransactionService {
 
 			System.out.println("Processing credit card: " + creditCardDetail);
 
-			// Fetch transactions for the current credit card
+			List<TransactionDetail> filteredTransactions = cardTransactions.stream()
+					.filter(transaction -> transaction.getCreditCardId() == creditCardDetail.getCreditCardId())
+					.flatMap(transaction -> transaction.getTransactions().stream()).collect(Collectors.toList());
 
-			List<CreditCardTransaction> cardTransactions = transactionRepository.findByUsername(username)
-					.getCreditcards().stream().collect(Collectors.toList());
-
-			System.out.println("Fetched transactions based on credit card ID");
-
-			for (CreditCardTransaction creditCardTransaction : cardTransactions) {
-
-				System.out.println("Processing transaction: " + creditCardTransaction);
-
-				if (creditCardDetail.getCreditCardId() == creditCardTransaction.getCreditCardId()) {
-
-					allTransactionDetails.computeIfAbsent(creditCardDetail.getCreditCardId(), k -> new ArrayList<>())
-							.addAll(creditCardTransaction.getTransactions());
-
-				}
-
+			if (!filteredTransactions.isEmpty()) {
+				allTransactionDetails.put(creditCardDetail.getCreditCardId(), filteredTransactions);
 			}
 
 		}
@@ -149,7 +142,7 @@ public class TransactionServiceimpl implements TransactionService {
 	public Map<Integer, List<TransactionDetail>> getHighValueExpensesForUser(String username, String statusFilter,
 			double amountThreshold) {
 
-		// Step 1: Retrieve all active credit cards for the user
+		// Retrieve all active credit cards for the user
 		System.out.println("Entering getHighValueExpensesForUser");
 
 		List<CreditCardDetail> activecreditcards = cardService.getallCreditcardsforuser(username).getCreditcards();
@@ -161,50 +154,47 @@ public class TransactionServiceimpl implements TransactionService {
 			case "disabled":
 				return card.getStatus().equalsIgnoreCase("disabled");
 			case "both":
-				return true; // Include all cards
+				return true;
 			default:
 				throw new IllegalArgumentException("Invalid status filter: " + statusFilter);
 			}
 		}).collect(Collectors.toList());
 
-		// Step 2: Retrieve transactions for each active credit card
+		// Fetch all transactions for the user in a single query
+
+		List<CreditCardTransaction> cardTransactions = transactionRepository.findByUsername(username).getCreditcards()
+				.stream().collect(Collectors.toList());
+
+		// Retrieve transactions for each active credit card
+
 		Map<Integer, List<TransactionDetail>> allTransactionDetails = new HashMap<>();
 		System.out.println("Retrieve transactions for each active credit card");
 
 		for (CreditCardDetail creditCardDetail : filteredCreditCards) {
 			System.out.println("Processing credit card: " + creditCardDetail);
 
-			// Fetch transactions for the current credit card
-			List<CreditCardTransaction> cardTransactions = transactionRepository.findByUsername(username)
-					.getCreditcards().stream().collect(Collectors.toList());
+			// Filter the transactions for this particular credit card
 
-			System.out.println("Fetched transactions based on credit card ID");
+			List<TransactionDetail> filteredTransactions = cardTransactions.stream()
+					.filter(transaction -> transaction.getCreditCardId() == creditCardDetail.getCreditCardId())
+					.flatMap(transaction -> transaction.getTransactions().stream())
+					.filter(transaction -> transaction.getTransactionAmount() > amountThreshold)
+					.collect(Collectors.toList());
 
-			for (CreditCardTransaction creditCardTransaction : cardTransactions) {
-				System.out.println("Processing transaction: " + creditCardTransaction);
-
-				if (creditCardDetail.getCreditCardId() == creditCardTransaction.getCreditCardId()) {
-
-					// Filter transactions based on the amount threshold
-
-					List<TransactionDetail> filteredTransactions = creditCardTransaction.getTransactions().stream()
-							.filter(transaction -> transaction.getTransactionAmount() > amountThreshold) // ---- Check
-																											// if amount
-																											// is
-																											// greater
-																											// than the
-																											// threshold
-							.collect(Collectors.toList());
-
-					allTransactionDetails.computeIfAbsent(creditCardDetail.getCreditCardId(), k -> new ArrayList<>())
-							.addAll(filteredTransactions);
-				}
+			// If there are any filtered transactions for this card, add them to the result
+			// map
+			if (!filteredTransactions.isEmpty()) {
+				allTransactionDetails.put(creditCardDetail.getCreditCardId(), filteredTransactions);
 			}
 		}
 
-		System.out.println("All transaction details: " + allTransactionDetails);
+		if (allTransactionDetails.isEmpty()) {
+			System.out.println("No high-value transactions found for any card.");
+		}
 
-		// Now list all the transactions
+		// Print the final filtered transactions
+		System.out.println("Filtered high-value transaction details: " + allTransactionDetails);
+
 		Map<Integer, List<TransactionDetail>> highValueTransactionDetails = new HashMap<>();
 
 		for (Map.Entry<Integer, List<TransactionDetail>> entry : allTransactionDetails.entrySet()) {
@@ -218,6 +208,7 @@ public class TransactionServiceimpl implements TransactionService {
 						.collect(Collectors.toList());
 
 				// Add the limited list back to the new map
+
 				highValueTransactionDetails.put(entry.getKey(), highValueExpenses);
 
 				if (highValueTransactionDetails.isEmpty()) {
@@ -228,7 +219,8 @@ public class TransactionServiceimpl implements TransactionService {
 		}
 		System.out.println("Limited transaction details: " + highValueTransactionDetails);
 
-		return highValueTransactionDetails; // Return the map with limited transactions
+		return highValueTransactionDetails;
+
 	}
 
 	// Customer wants to view last x number of expenses of all cards
@@ -236,7 +228,7 @@ public class TransactionServiceimpl implements TransactionService {
 	public Map<Integer, List<TransactionDetail>> getLastXTransactionsForUser(String username, int limit,
 			String statusFilter) {
 
-		// Step 1: Retrieve all active credit cards for the user
+		// Retrieve all active credit cards for the user
 
 		System.out.println("Entering getLastXTransactionsForUser");
 
@@ -260,7 +252,13 @@ public class TransactionServiceimpl implements TransactionService {
 			}
 		}).collect(Collectors.toList());
 
-		// Step 2: Retrieve transactions for each active credit card
+		
+		// Fetch all transactions for the user in a single query
+
+		List<CreditCardTransaction> cardTransactions = transactionRepository.findByUsername(username).getCreditcards()
+				.stream().collect(Collectors.toList());
+		
+		// Retrieve transactions for each active credit card
 
 		Map<Integer, List<TransactionDetail>> allTransactionDetails = new HashMap<>();
 
@@ -270,24 +268,14 @@ public class TransactionServiceimpl implements TransactionService {
 
 			System.out.println("Processing credit card: " + creditCardDetail);
 
-			// Fetch transactions for the current credit card
-
-			List<CreditCardTransaction> cardTransactions = transactionRepository.findByUsername(username)
-					.getCreditcards().stream().collect(Collectors.toList());
-
-			System.out.println("Fetched transactions based on credit card ID");
-
-			for (CreditCardTransaction creditCardTransaction : cardTransactions) {
-
-				System.out.println("Processing transaction: " + creditCardTransaction);
-
-				if (creditCardDetail.getCreditCardId() == creditCardTransaction.getCreditCardId()) {
-
-					allTransactionDetails.computeIfAbsent(creditCardDetail.getCreditCardId(), k -> new ArrayList<>())
-							.addAll(creditCardTransaction.getTransactions());
-
-				}
-
+			
+			List<TransactionDetail> filteredTransactions = cardTransactions.stream()
+					.filter(transaction -> transaction.getCreditCardId() == creditCardDetail.getCreditCardId())
+					.flatMap(transaction -> transaction.getTransactions().stream()).collect(Collectors.toList());
+			
+			
+			if (!filteredTransactions.isEmpty()) {
+				allTransactionDetails.put(creditCardDetail.getCreditCardId(), filteredTransactions);
 			}
 
 		}
