@@ -1,0 +1,29 @@
+/* src/components/Login.css */
+
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    margin: 20px; /* Margin around the login component */
+}
+
+.login input {
+    padding: 10px; /* Padding inside input */
+    margin: 10px 0; /* Margin above and below input */
+    width: 200px; /* Fixed width for input */
+    border: 1px solid #bdc3c7; /* Light border */
+    border-radius: 4px; /* Rounded corners */
+}
+
+.login button {
+    padding: 10px 20px; /* Padding inside button */
+    background-color: #2980b9; /* Blue background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.login button:hover {
+    background-color: #3498db; /* Lighter blue on hover */
+}

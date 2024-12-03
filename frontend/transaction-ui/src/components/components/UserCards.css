@@ -1,0 +1,24 @@
+/* src/components/UserCards.css */
+.user-cards-container {
+    display: flex; /* Use flexbox to align children side by side */
+    justify-content: space-between; /* Space between the cards and transaction container */
+    gap: 10px; /* Optional: add gap between card and transaction container */
+}
+
+.credit-cards {
+     /* Allow credit cards to take available space */
+    display: flex;
+    flex-direction: column; /* Stack credit cards vertically */
+}
+
+.transactions-container {
+    flex: 3.5; /* Allow the transactions container to take available space */
+    /* Remove the fixed width */
+    /* Optionally, add styling for the transactions container */
+    background-color: #f8f8f8; /* Light background for visibility */
+    padding: 10px; /* Padding around the transaction details */
+    border-radius: 20px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+}
+

@@ -23,12 +23,12 @@ const TransactionFilter = ({ onFilterChange, onCustomDateChange }) => {
 
     return (
         <div className="transaction-filter">
-            <label htmlFor="transaction-filter" style={{ marginRight: '10px' }}>Filter Transactions:</label>
+            <label htmlFor="transaction-filter" style={{ marginRight: '10px' }}>Transactions:</label>
             <select id="transaction-filter" value={filterOption} onChange={handleFilterChange}>
                 <option value="all">All Transactions</option>
-                <option value="last10">Last 10</option>
-                <option value="last3">Last 3 Months</option>
-                <option value="last6">Last 6 Months</option>
+                <option value="last10">Last 10 Transactions</option>
+                <option value="lastMonth">Last Month's Max Expenses</option>
+                <option value="highValue">High-Value Expenses</option>
                 <option value="custom">Custom Date</option>
             </select>
             {filterOption === 'custom' && (

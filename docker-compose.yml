@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ccm-backend
+    ports:
+      - '8090:8090'  # Expose backend on port 8090
+    networks:
+      - ccm  # Connect to the custom network
+
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend/transaction-ui
+      dockerfile: Dockerfile
+    container_name: ccm-frontend
+    ports:
+      - '3000:3000'  # Expose frontend on port 3000
+    environment:
+      - REACT_APP_API_URL=http://backend:8090  # Set the backend API URL for React
+    stdin_open: true
+    networks:
+      - ccm  # Connect to the same custom network
+
+# Define a custom network for inter-container communication
+networks:
+  ccm:
+    driver: bridge

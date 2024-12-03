@@ -1,24 +1,121 @@
-/* src/components/TransactionFilter.css */
-.transaction-filter {
+/* src/components/UserCards.css */
+
+/* Ensure the entire container is positioned relative */
+.user-cards-container {
+    position: relative; /* Allows absolute positioning of child elements (like the filter) */
     display: flex;
-    gap: 10px; /* Space between buttons */
-    margin-bottom: 10px; /* Space below filter */
+    justify-content: space-between;
+    gap: 20px; /* Space between the credit cards and the transaction view */
+    padding: 20px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
-.transaction-filter button {
-    padding: 5px 10px; /* Button padding */
-    border: none;
+/* Position the filter in the top-right corner */
+.transaction-filter {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #fff;
+    padding: 10px;
     border-radius: 5px;
-    background-color: #f0f0f0;
-    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Ensure it stays above other elements */
 }
 
-.transaction-filter button.active {
-    background-color: #007bff; /* Highlight active button */
-    color: white; /* Change text color for active button */
+/* Add some styling for the dropdown and inputs inside the filter */
+.transaction-filter select,
+.transaction-filter input {
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
+.transaction-filter label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Styling for custom date range inputs */
 .custom-date-picker {
     display: flex;
-    gap: 5px; /* Space between date inputs */
+    gap: 10px;
+}
+
+/* Container for credit cards */
+.credit-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Add space between the credit card containers */
+    flex: 1;
+}
+
+/* Credit card container and styling */
+.credit-card-container {
+    width: 450px;
+    margin: 10px;
+}
+
+/* Credit card styling */
+.credit-card {
+    background: linear-gradient(135deg, #0a7b9d 30%, #e0e0e0 100%);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px;
+    color: #1b1616;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Transaction container */
+.transactions-container {
+    width: 40%; /* Take 40% of the available space */
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-left: 20px; /* Space between the card and the transaction view */
+    flex-grow: 1;
+}
+
+/* Transaction list styling */
+.transactions ul {
+    list-style: none;
+    padding: 0;
+}
+
+.transactions li {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.transactions h3 {
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Responsive styling for smaller screens */
+@media (max-width: 768px) {
+    .user-cards-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .transaction-filter {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-bottom: 20px;
+    }
+
+    .transactions-container {
+        width: 100%; /* Full width on smaller screens */
+        margin-left: 0; /* Remove left margin */
+    }
 }

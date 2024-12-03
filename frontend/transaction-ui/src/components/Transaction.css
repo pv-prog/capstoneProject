@@ -3,52 +3,100 @@
 /* General Transaction Styles */
 .transaction {
     display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.transaction:hover {
+    transform: translateY(-5px); /* Slight lift effect */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Hover effect for depth */
+}
+
+/* Credit and Debit Transactions */
+.transaction.credit {
+    border-left: 6px solid #27ae60; /* Green border for credits */
+}
+
+.transaction.debit {
+    border-left: 6px solid #e74c3c; /* Red border for debits */
+}
+
+/* Transaction Header (Card Number and Vendor) */
+.transaction-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px; /* Space between header and transaction details */
+}
+
+.transaction-header h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50; /* Dark color for card number */
+    margin: 0;
+    padding-bottom: 8px;
+}
+
+.transaction-header p {
+    font-size: 14px;
+    color: #7f8c8d; /* Lighter color for vendor */
+    margin: 0;
+    font-weight: 500;
+    text-transform: uppercase; /* Uppercase for vendor type */
+}
+
+/* Transaction Details (Transaction ID, Date, Time) */
+.transaction-details {
+    margin-bottom: 15px; /* Space between transaction details and transaction summary */
+}
+
+.transaction-id {
+    font-size: 12px;
+    color: #555;
+    font-weight: 500;
+    margin: 0;
+    padding-bottom: 5px;
+}
+
+.transaction-date,
+.transaction-time {
+    font-size: 12px;
+    color: #7f8c8d; /* Lighter color for date and time */
+    margin: 0;
+}
+
+.transaction-date {
+    margin-bottom: 2px;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0;
+    padding-bottom: 2px;
+}
+
+/* Transaction Summary (Amount and Type) */
+.transaction-summary {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Credit Transactions */
-.transaction.credit {
-    border-left: 5px solid #27ae60; /* Green for credits */
-}
-
-/* Debit Transactions */
-.transaction.debit {
-    border-left: 5px solid #e74c3c; /* Red for debits */
-}
-
-/* Transaction Details */
-.transaction-details {
-    flex-grow: 1; /* Allows the details to take up available space */
-}
-
-.transaction-date, 
-.transaction-time {
-    margin: 0;
-    font-size: 14px;
-    color: #555; /* Darker text for contrast */
-}
-
-/* Transaction Summary */
-.transaction-summary {
-    text-align: right; /* Aligns the summary to the right */
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c3e50;
 }
 
 .transaction-type {
+    font-size: 14px;
     font-weight: bold;
-    font-size: 16px;
+    text-transform: capitalize; /* First letter capitalized */
 }
 
 .transaction-amount {
-    font-size: 18px;
-    font-weight: bold;
-    color: inherit; /* Inherits color based on transaction type */
+    font-size: 16px;
+    font-weight: 700;
+    color: inherit; /* Inherit color from credit/debit class */
 }
 
 .transaction.credit .transaction-amount {
@@ -57,4 +105,40 @@
 
 .transaction.debit .transaction-amount {
     color: #e74c3c; /* Red for debit amounts */
+}
+
+/* Spacing Adjustments for Responsive Design */
+@media (max-width: 100px) {
+    .transaction {
+        padding: 15px;
+    }
+
+    .transaction-header h4 {
+        font-size: 14px;
+    }
+
+    .transaction-header p {
+        font-size: 12px;
+    }
+
+    .transaction-details {
+        margin-bottom: 10px;
+    }
+
+    .transaction-id,
+    .transaction-date,
+    .transaction-time {
+        font-size: 12px;
+    }
+
+    .transaction-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 14px;
+    }
+
+    .transaction-amount {
+        font-size: 15px;
+        margin-top: 5px;
+    }
 }

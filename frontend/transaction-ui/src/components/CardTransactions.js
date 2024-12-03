@@ -1,16 +1,39 @@
-// src/components/CardTransactions.js
 import React, { useCallback, useEffect, useState } from 'react';
 import './CardTransactions.css';
 import Transaction from './Transaction'; // Import the Transaction component
 import TransactionFilter from './TransactionFilter'; // Import the TransactionFilter component
+import axios from 'axios';
 
-const CardTransactions = ({ transactions, cardNumber, cardType, cardStatus }) => {
-    const [filteredTransactions, setFilteredTransactions] = useState(transactions);
+const CardTransactions = ({ username, cardNumber, cardType, cardStatus }) => {
+    const [transactions, setTransactions] = useState([]); // State to hold transactions
+    const [filteredTransactions, setFilteredTransactions] = useState([]);
     const [filterOption, setFilterOption] = useState('all'); // Default filter option
     const [customStartDate, setCustomStartDate] = useState('');
     const [customEndDate, setCustomEndDate] = useState('');
-    
 
+    // Fetch transactions from the API when the component mounts
+    useEffect(() => {
+        const fetchTransactions = async () => {
+            try {
+                const response = await axios.get(`/api/customer/transactions/${username}`);
+                const data = response.data;
+                
+                // Flatten transactions from the response to get all transactions for this user
+                const userTransactions = data.creditcards
+                    .filter(card => card.creditCardId === cardNumber) // Match the selected card number
+                    .flatMap(card => card.transactions); // Flatten all transactions for the matched card
+
+                setTransactions(userTransactions);
+                setFilteredTransactions(userTransactions); // Set the initial filtered transactions
+            } catch (error) {
+                console.error('Error fetching transactions:', error);
+            }
+        };
+
+        fetchTransactions();
+    }, [username, cardNumber]); // Run when `username` or `cardNumber` changes
+
+    // Function to filter transactions based on selected filter option
     const applyFilter = useCallback(() => {
         let filtered = [...transactions]; // Start with all transactions
 
@@ -46,10 +69,12 @@ const CardTransactions = ({ transactions, cardNumber, cardType, cardStatus }) =>
         setFilteredTransactions(filtered); // Update the filtered transactions state
     }, [transactions, filterOption, customStartDate, customEndDate]);
 
+    // Apply filter whenever the filterOption or custom dates change
     useEffect(() => {
         applyFilter();
     }, [filterOption, customStartDate, customEndDate, applyFilter]);
 
+    // Handle filter option change
     const handleFilterChange = (option) => {
         setFilterOption(option); // Update the current filter option
         if (option !== 'custom') {
@@ -59,6 +84,7 @@ const CardTransactions = ({ transactions, cardNumber, cardType, cardStatus }) =>
         }
     };
 
+    // Handle custom date range change
     const handleCustomDateChange = (startDate, endDate) => {
         if (startDate) {
             setCustomStartDate(startDate); // Update start date
@@ -71,16 +97,13 @@ const CardTransactions = ({ transactions, cardNumber, cardType, cardStatus }) =>
     // Function to convert transactions to CSV and trigger download
     const downloadCSV = () => {
         const csvData = [
-            ['Transaction ID', 'Date','TransactionTime', 'TransactionType','Amount',], // CSV header
+            ['Transaction ID', 'Date', 'Transaction Time', 'Transaction Type', 'Amount'], // CSV header
             ...filteredTransactions.map(transaction => [
                 transaction.transactionId,
                 transaction.transactionDate,
                 transaction.transactionTime,
                 transaction.transactionType,
                 transaction.transactionAmount,
-              
-               
-                
             ]),
         ];
 

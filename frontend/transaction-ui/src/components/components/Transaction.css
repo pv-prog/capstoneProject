@@ -1,0 +1,60 @@
+/* src/components/Transaction.css */
+
+/* General Transaction Styles */
+.transaction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Credit Transactions */
+.transaction.credit {
+    border-left: 5px solid #27ae60; /* Green for credits */
+}
+
+/* Debit Transactions */
+.transaction.debit {
+    border-left: 5px solid #e74c3c; /* Red for debits */
+}
+
+/* Transaction Details */
+.transaction-details {
+    flex-grow: 1; /* Allows the details to take up available space */
+}
+
+.transaction-date, 
+.transaction-time {
+    margin: 0;
+    font-size: 14px;
+    color: #555; /* Darker text for contrast */
+}
+
+/* Transaction Summary */
+.transaction-summary {
+    text-align: right; /* Aligns the summary to the right */
+}
+
+.transaction-type {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.transaction-amount {
+    font-size: 18px;
+    font-weight: bold;
+    color: inherit; /* Inherits color based on transaction type */
+}
+
+.transaction.credit .transaction-amount {
+    color: #27ae60; /* Green for credit amounts */
+}
+
+.transaction.debit .transaction-amount {
+    color: #e74c3c; /* Red for debit amounts */
+}

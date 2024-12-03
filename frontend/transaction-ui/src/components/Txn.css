@@ -1,0 +1,101 @@
+/* Container for the txn */
+.txn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #363f3f;  /* Dark background for each row */
+    color: rgb(22, 21, 21);
+    padding: 15px 20px;  /* Increased padding for better spacing */
+    margin-bottom: 15px;  /* Increased margin for better separation */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Border color for credit and debit types */
+.txn.credit {
+    border-left: 7px solid #27ae60; /* Green border for credits */
+}
+
+.txn.debit {
+    border-left: 7px solid #e74c3c; /* Red border for debits */
+}
+
+/* Hover effect for a lifted look */
+.txn:hover {
+    transform: translateY(-5px);  /* Slightly raise the row on hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);  /* Stronger shadow on hover */
+}
+
+/* Label styling */
+.txn .txn-label {
+    font-size: 12px;
+    color: #4ca3f0;  /* Light blue for labels */
+    font-weight: bold;
+    margin-bottom: 5px;  /* Add space below the label */
+}
+
+/* Value Styling */
+.txn .txn-value {
+    font-size: 11px;
+    font-weight: 250;
+    color: #ffffff;
+    font-weight: bold;
+    font-style:normal;
+}
+
+/* Amount value color */
+.txn .txn-amount {
+    font-size: 13px;
+    font-weight: bold;
+    color: #80e0a7;  /* Green color for the amount */
+}
+
+/* Separator between rows */
+.txn .separator {
+    border-left: 1px solid #555555;
+    height: 20px;
+    margin: 0 10px;
+}
+
+/* txn ID and Date sections */
+.txn .txn-id,
+.txn .txn-date {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    margin-right: 15px;  /* Add spacing between elements */
+}
+
+/* Adjust spacing between columns */
+.txn .txn-id,
+.txn .txn-date,
+.txn .txn-type,
+.txn .txn-amount {
+    flex: 1;
+}
+
+/* Adjust layout for each column */
+.txn > div {
+    margin-right: 15px;  /* Increased margin between divs */
+}
+
+/* For small devices: make the layout stack vertically */
+@media (max-width: 600px) {
+    .txn {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 15px;  /* Adjust padding on smaller devices */
+    }
+
+    .txn > div {
+        margin-right: 0;
+        margin-bottom: 12px;  /* Space between stacked elements */
+    }
+
+    /* Add space between the rows when stacked */
+    .txn {
+        margin-bottom: 20px;
+    }
+}
