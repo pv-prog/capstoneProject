@@ -24,7 +24,7 @@ public class CreditCardController {
 	private CreditCardService creditCardService;
 
 	@Operation(summary = "Get all Creditcards", description = "Provides a list of all credit cards associated with the given customer")
-	@GetMapping("/{username}")
+	@GetMapping("/listcreditcards/{username}")
 	public CreditCard getcreditcardforuser(@PathVariable("username") String username) {
 
 		System.out.println(creditCardService.getCreditcardforuser(username));
@@ -34,15 +34,18 @@ public class CreditCardController {
 	}
 
 	@Operation(summary = "Add new Creditcards", description = "Add new credit cards for the specified customer")
-	@PostMapping("/{username}")
+	@PostMapping("/addcreditcard/{username}")
 	public ResponseEntity<CreditCard> addCreditCard(@PathVariable String username,
 			@RequestBody CreditCard.CreditCardDetail creditCardDetail) {
 		CreditCard updatedCreditCard = creditCardService.addCreditCard(username, creditCardDetail);
 		return ResponseEntity.ok(updatedCreditCard);
 	}
+	
+	
+	
 
 	@Operation(summary = "Toggle Creditcards Status", description = "Update the status (Active/Inactive) of the credit cards for the given customer")
-	@PutMapping("/{username}/{creditCardId}/toggle")
+	@PutMapping("/togglecreditcard/{username}/{creditCardId}/toggle")
 	public ResponseEntity<String> toggleCreditCardStatus(@PathVariable String username,
 			@PathVariable int creditCardId) {
 		

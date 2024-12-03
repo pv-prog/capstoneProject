@@ -27,11 +27,11 @@ public class CustomerController {
 	@Autowired
 	CustomerService customerService;
 
-	@Autowired
-	CreditCardService creditCardService;
-
-	@Autowired
-	TransactionService transactionService;
+//	@Autowired
+//	CreditCardService creditCardService;
+//
+//	@Autowired
+//	TransactionService transactionService;
 
 	@Operation(summary = "Get Customer Profile", description = "Show the profile details for the specified customer")
 	@GetMapping("/{username}")
@@ -43,7 +43,7 @@ public class CustomerController {
 
 	}
 
-//Rest Template for Microservices
+////Rest Template for Microservices
 //	@Autowired
 //	
 //	RestTemplate restTemplate;
