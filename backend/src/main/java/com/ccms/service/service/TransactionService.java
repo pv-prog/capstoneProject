@@ -10,11 +10,13 @@ public interface TransactionService {
 
 	public Transaction getTransactionsforuser(String username);
 	
-	public Map<Integer, Double> getMaxExpensesForLastMonth(String username,String statusFilter);
+	public List<Map<String, Object>> getMaxExpensesForLastMonth(String username,String statusFilter);
 	
-	public Map<Integer, List<TransactionDetail>> getHighValueExpensesForUser(String username,String statusFilter,double amountThreshold);
+	public Map<String, List<Map<String, TransactionDetail>>> getHighValueExpensesForUser(String username,int limit, String statusFilter,double amountThreshold);
 
 	public Map<Integer, List<TransactionDetail>> getLastXTransactionsForUser(String username, int limit, String statusFilter);
+	
+	public List<Map<String, Object>> getLastXExpensesForUser(String username, int limit, String statusFilter);
 
 	
 }
