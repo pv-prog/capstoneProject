@@ -1,5 +1,6 @@
 # API contract between the server and front-end devices
 Authorization Roles/Permissions: Must be logged in. To complete this operation successfully.
+----------------
 Customer Object
 ```
 {
@@ -58,10 +59,38 @@ Transaction Object
                     "transactionTime": "8:15 AM",
                     "transactionType": "cr",
                     "transactionAmount": 240082.03
+                    "transactionDesc": "Clothing"
                 }]
 }]
 }
 ```
 ## HTTP Method
-1. When customer wants to view last month maximum expenses of all the cards
+### 1. When customer wants to view last month maximum expenses of all the cards
 ### GET /api/customer/creditcards/lastmonth/max
+### Url
+```
+http://{hostname}/api/customer/transactions/maxExpenses/lastMonth/{username}
+```
+**URL Params:** None
+**Request Params:** username 
+**Success Response:**
+Code: 200
+Content: 
+```
+[
+  {
+    "credit_card": "5108-7587-6710-8221",
+    "month": "NOV",
+    "amount": 222204.6
+  },
+  {
+    "credit_card": "5048-3787-4861-6649",
+    "month": "NOV",
+    "amount": 1235.92
+  },
+  {
+    "credit_card": "5108-7594-1855-6222",
+    "month": "NOV",
+    "amount": 125.92
+  }
+```
