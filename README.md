@@ -185,7 +185,7 @@ Content:
 }
 ```
 ### 4. User Story: when customer wants to view last x number of expenses of all cards
-### GET /api/customer/transactions/lastXTransactions/{username}
+### GET /api/customer/transactions/lastXExpenses/{username}
 ### Url
 ```
 http://{hostname}/api/customer/transactions/lastXExpenses/achilleyb?limit={limit}&status=both
