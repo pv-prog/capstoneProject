@@ -72,6 +72,7 @@ Transaction Object
 http://{hostname}/api/customer/transactions/maxExpenses/lastMonth/{username}
 ```
 **URL Params:** username
+
 **Success Response:**
 
 Code: 200
@@ -101,6 +102,7 @@ Content:
 http://{hostname}/api/customer/transactions/highvalue/expenses/{username}?status=both&amountThreshold={amountThreshold}
 ```
 **URL Params:** username , amountThreshold
+
 **Success Response:**
 
 Code: 200
@@ -143,7 +145,9 @@ Content:
 http://{hostname}/api/customer/creditcard/{username}
 ```
 **URL Params:** username
+
 **Request Params:** creditCardNumber , expiryMonth , expiryYear , cvv , wireTransactionVendor
+
 **Request body:**
 ```
 {
@@ -186,6 +190,7 @@ Content:
 http://{hostname}/api/customer/transactions/lastXTransactions/{username}?limit=1
 ```
 **URL Params:** username , limit value
+
 **Success Response:**
 
 Code: 200
