@@ -94,14 +94,15 @@ Content:
     "month": "NOV",
     "amount": 125.92
   }
+]
 ```
 ### 2. User Story: list the expenses more than the amount of expenses
 ### GET /api/customer/transactions/highvalue/expenses
 ### Url
 ```
-http://{hostname}/api/customer/transactions/highvalue/expenses/{username}?status=both&amountThreshold={amountThreshold}
+http://{hostname}/api/customer/transactions/highvalue/expenses/{username}?limit={limit}&status={status}&amountThreshold={amountThreshold}
 ```
-**URL Params:** username , amountThreshold
+**URL Params:** username , limit, status, amountThreshold
 
 **Success Response:**
 
