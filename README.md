@@ -66,7 +66,7 @@ Transaction Object
 ```
 ## HTTP Method
 ### 1. When customer wants to view last month maximum expenses of all the cards
-### GET /api/customer/creditcards/lastmonth/max
+### GET /api/customer/transactions/maxExpenses/lastMonth
 ### Url
 ```
 http://{hostname}/api/customer/transactions/maxExpenses/lastMonth/{username}
