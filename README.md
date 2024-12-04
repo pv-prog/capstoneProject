@@ -188,7 +188,7 @@ Content:
 ### GET /api/customer/transactions/lastXTransactions/{username}
 ### Url
 ```
-http://{hostname}/api/customer/transactions/lastXTransactions/{username}?limit=1
+http://{hostname}/api/customer/transactions/lastXExpenses/achilleyb?limit={limit}&status=both
 ```
 **URL Params:** username , limit value
 
@@ -197,36 +197,61 @@ http://{hostname}/api/customer/transactions/lastXTransactions/{username}?limit=1
 Code: 200
 Content:
 ```
-{
-    "1": [
-        {
-            "transactionId": 1013283302,
-            "transactionDate": "12/10/2024",
-            "transactionTime": "5:54 AM",
-            "transactionType": "cr",
-            "transactionAmount": 6872.46,
-            "transactionDesc": "Electronics"
-        }
-    ],
-    "2": [
-        {
-            "transactionId": 4011816105,
-            "transactionDate": "11/15/2024",
-            "transactionTime": "1:00 PM",
-            "transactionType": "cr",
-            "transactionAmount": 1235.92,
-            "transactionDesc": "Food"
-        }
-    ],
-    "3": [
-        {
-            "transactionId": 401181223,
-            "transactionDate": "11/01/2024",
-            "transactionTime": "1:00 PM",
-            "transactionType": "db",
-            "transactionAmount": 125.92,
-            "transactionDesc": "Food"
-        }
+[
+  {
+    "credit_card": "5108758767108221",
+    "transactions": [
+      {
+        "month": "DEC",
+        "amount": 6872.46,
+        "description": "Electronics"
+      },
+      {
+        "month": "NOV",
+        "amount": 3428.97,
+        "description": "Food"
+      },
+      {
+        "month": "NOV",
+        "amount": 222204.6,
+        "description": "Clothing"
+      },
+      {
+        "month": "JUN",
+        "amount": 240082.03,
+        "description": "Clothing"
+      },
+      {
+        "month": "JUN",
+        "amount": 1463.69,
+        "description": "Groceries"
+      },
+      {
+        "month": "JAN",
+        "amount": 701.25,
+        "description": "Food"
+      }
     ]
-}
+  },
+  {
+    "credit_card": "5048378748616649",
+    "transactions": [
+      {
+        "month": "NOV",
+        "amount": 1235.92,
+        "description": "Food"
+      }
+    ]
+  },
+  {
+    "credit_card": "5108759418556222",
+    "transactions": [
+      {
+        "month": "NOV",
+        "amount": 125.92,
+        "description": "Food"
+      }
+    ]
+  }
+]
 ```
