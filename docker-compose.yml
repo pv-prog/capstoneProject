@@ -6,7 +6,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: ccm-backend
+    container_name: backend
     ports:
       - '8090:8090'  # Expose backend on port 8090
     networks:
@@ -17,7 +17,7 @@ services:
     build:
       context: ./frontend/transaction-ui
       dockerfile: Dockerfile
-    container_name: ccm-frontend
+    container_name: frontend
     ports:
       - '3000:3000'  # Expose frontend on port 3000
     environment:

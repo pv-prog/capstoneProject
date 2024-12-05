@@ -110,7 +110,7 @@ const CreditCard = ({ card, onToggleTransactions, showTransactions }) => {
     const handleToggleStatus = async () => {
         try {
           // Make the API call to toggle the card status
-          const response = await axios.put('/api/customer/creditcard/user1/2/toggle');
+          const response = await axios.put('/api/customer/creditcard/togglecreditcard/user1/2/toggle');
           console.log(response);
           
           // Handle the response accordingly

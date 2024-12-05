@@ -33,7 +33,7 @@ const UserCards = ({ username }) => {
       // Function to fetch user data and credit card details
       const fetchUserData = async () => {
         try {
-            const response = await axios.get(`/api/customer/creditcard/${username}`);
+            const response = await axios.get(`/api/customer/creditcard/listcreditcards/${username}`);
             setUser(response.data); // Store the user data after fetching
             setLoading(false); // Set loading to false once data is fetched
 
@@ -197,7 +197,7 @@ const handleSubmit = async (e) => {
 
     try {
         // Post the data with the modified creditCardNumber
-        const response = await axios.post(`/api/customer/creditcard/${username}`, formattedCardData);
+        const response = await axios.post(`/api/customer/creditcard/addcreditcard/${username}`, formattedCardData);
 
         // Show success toast
         Toastify({

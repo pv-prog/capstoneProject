@@ -49,7 +49,7 @@ const CreditCard = ({ card, user, isAddCard }) => {
     const handleToggleStatus = async () => {
         try {
             // Toggle the card status via the API
-            const response = await axios.put(`/api/customer/creditcard/${user.username}/${card.creditCardId}/toggle`);
+            const response = await axios.put(`/api/customer/creditcard/togglecreditcard/${user.username}/${card.creditCardId}/toggle`);
             if (response.status === 200) {
                 // Toggle the card's active state
                 const newStatus = !isActive;
