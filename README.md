@@ -6,7 +6,6 @@ Customer Object
 {
     "id": "6739e4e77544f601a61c7129",
     "username": "achilleyb",
-    "password": "$2a$12$x/G8rsZs/cHMEL0U6Ist2.jNmlTZRzXNOUtOSb/vSTeImqA0bOKLG",
     "name": {
         "first": "Maurita",
         "last": "Baden"
