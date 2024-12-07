@@ -1,0 +1,21 @@
+.txn {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.txn-label {
+    font-weight: bold;
+}
+
+.txn-value {
+    margin-left: 5px;
+}
+
+.separator {
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}

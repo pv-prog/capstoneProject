@@ -142,3 +142,115 @@
         margin-top: 5px;
     }
 }
+
+/* Container to hold both cards and transactions */
+.card-and-transactions-container {
+    display: flex;
+    justify-content: space-between; /* Place cards on the left and transactions on the right */
+    gap: 20px; /* Space between the cards section and transactions */
+}
+
+/* Styling for the transaction area to align to the right */
+.transaction-container {
+    flex: 0 0 40%; /* Set the width of the transaction container (40% of the parent width) */
+    max-width: 400px; /* Optional: limit the max width of the transaction section */
+    overflow-y: auto; /* Enable scrolling if there are too many transactions */
+    padding: 20px; /* Padding around transaction details */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: box shadow for the transaction container */
+}
+
+/* The rest of the existing transaction styles */
+.transaction {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.transaction:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.transaction.credit {
+    border-left: 6px solid #27ae60;
+}
+
+.transaction.debit {
+    border-left: 6px solid #e74c3c;
+}
+
+.transaction-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.transaction-header h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+    padding-bottom: 8px;
+}
+
+.transaction-header p {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin: 0;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.transaction-details {
+    margin-bottom: 15px;
+}
+
+.transaction-id {
+    font-size: 12px;
+    color: #555;
+    font-weight: 500;
+    margin: 0;
+    padding-bottom: 5px;
+}
+
+.transaction-date,
+.transaction-time {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin: 0;
+}
+
+.transaction-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.transaction-type {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.transaction-amount {
+    font-size: 16px;
+    font-weight: 700;
+    color: inherit;
+}
+
+.transaction.credit .transaction-amount {
+    color: #27ae60;
+}
+
+.transaction.debit .transaction-amount {
+    color: #e74c3c;
+}
+

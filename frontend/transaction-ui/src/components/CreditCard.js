@@ -3,8 +3,8 @@ import axios from 'axios';
 import Toastify from 'toastify-js';
 import './CreditCard.css'; // Import your CSS for styling
 import Txn from './Txn'; // Import the Transaction component
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-// Function to get the appropriate card icon based on card type
 const getCardIcon = (cardType) => {
     switch (cardType) {
         case 'visa':
@@ -18,7 +18,6 @@ const getCardIcon = (cardType) => {
     }
 };
 
-// Function to generate a random gradient background based on card type
 const getRandomGradient = (cardType) => {
     const colors = {
         visa: ['black', '#40E0D0'],
@@ -33,29 +32,27 @@ const getRandomGradient = (cardType) => {
 };
 
 const CreditCard = ({ card, user, isAddCard }) => {
-    const [showCvv, setShowCvv] = useState(false); // State to toggle CVV visibility
-    const [isActive, setIsActive] = useState(card.status === 'enabled'); // Initialize based on card status
-    const [transactions, setTransactions] = useState([]); // State for storing fetched transactions
-    const [loadingTransactions, setLoadingTransactions] = useState(false); // Loading state for transactions
-    const [showTransactions, setShowTransactions] = useState(false); // State to toggle showing transactions
+    const [showFullNumber, setShowFullNumber] = useState(false);
+    const [showCvv, setShowCvv] = useState(false);
+    const [isActive, setIsActive] = useState(card.status === 'enabled');
+    const [transactions, setTransactions] = useState([]);
+    const [loadingTransactions, setLoadingTransactions] = useState(false);
+    const [showTransactions, setShowTransactions] = useState(false);
+    const [numTransactions, setNumTransactions] = useState(3); // Default to top 10
+    const [filterType, setFilterType] = useState('all'); // Default filter is 'all'
+    const [selectedCardNumber, setSelectedCardNumber] = useState(card.creditCardNumber); // Selected card number
 
-    // Function to toggle CVV visibility
     const handleToggleCvv = (e) => {
         e.stopPropagation();
         setShowCvv(!showCvv);
     };
 
-    // Function to toggle card status (enabled/disabled)
     const handleToggleStatus = async () => {
         try {
-            // Toggle the card status via the API
             const response = await axios.put(`/api/customer/creditcard/togglecreditcard/${user.username}/${card.creditCardId}/toggle`);
             if (response.status === 200) {
-                // Toggle the card's active state
                 const newStatus = !isActive;
-                setIsActive(newStatus);  // Update state
-    
-                // Log the new status after updating the state
+                setIsActive(newStatus);
                 console.log(`${user.username} card ${card.creditCardNumber} ${newStatus ? 'Enabled' : 'Disabled'}`);
             }
         } catch (error) {
@@ -68,31 +65,69 @@ const CreditCard = ({ card, user, isAddCard }) => {
                 backgroundColor: '#FFEFD5',
                 className: "large-toast",
             }).showToast();
-            
-            // If the API call fails, revert the state
-            setIsActive(!isActive);  // Revert to the original state
+            setIsActive(!isActive);
         }
     };
 
-    // Function to fetch transactions for the selected card
     const fetchTransactions = async () => {
         setLoadingTransactions(true);
         try {
-            const response = await axios.get(`/api/customer/transactions/${user.username}`);
-            console.log("Fetched response data: ", response.data);
-
-            // Find the credit card that matches the selected card's creditCardId
-            const creditCard = response.data.creditcards.find(cardItem => cardItem.creditCardId === card.creditCardId);
-
-            if (creditCard && creditCard.transactions) {
-                // No need to filter by cardId in transactions because it's already inside the correct creditCardId block
-                const filteredTransactions = creditCard.transactions;
-                setTransactions(filteredTransactions); // Set filtered transactions for this card
+            let url = '';
+            switch (filterType) {
+                case 'topX':
+                    url = `/api/customer/transactions/lastXTransactions/${user.username}?limit=${numTransactions}&status=enabled`;
+                    break;
+                case 'maxValue':
+                    url = `/api/customer/transactions/maxExpenses/lastMonth/${user.username}?status=both`;
+                    break;
+                case 'all':
+                default:
+                    url = `/api/customer/transactions/${user.username}`;
+                    break;
+                
+            }
+    
+            console.log(`Fetching transactions for URL: ${url}`);
+    
+            const response = await axios.get(url);
+            console.log('API Response:', response.data);
+    
+            // Explicitly handle each case based on the expected response structure
+            if (filterType === 'topX' && response.data && response.data[card.creditCardId]) {
+                console.log("Handling Case 1: Response keyed by creditCardId.");
+                const transactionsForCard = response.data[card.creditCardId];
+                setTransactions(transactionsForCard);
+            } else if (filterType === 'all' && response.data && response.data.creditcards) {
+                console.log("Handling Case 2: Response contains an array of creditcards.");
+                const creditCard = response.data.creditcards.find(item => item.creditCardId === card.creditCardId);
+                if (creditCard && creditCard.transactions) {
+                    setTransactions(creditCard.transactions);
+                } else {
+                    console.log("No transactions found for the selected card in Case 2.");
+                    setTransactions([]);
+                }
+            } else if (filterType === 'maxValue' && Array.isArray(response.data)) {
+                console.log("Handling Case 3: Response is an array of cards with max transactions.");
+                const selectedCardMaxTxn = response.data.find(item => {
+                    const responseCardNumber = item.credit_card?.replace(/-/g, ''); // Clean card number
+                    const selectedCardNumberCleaned = card.creditCardNumber?.replace(/-/g, ''); // Clean selected card number
+                    console.log('Response Card:', responseCardNumber, 'Selected Card:', selectedCardNumberCleaned);
+                    return responseCardNumber === selectedCardNumberCleaned; // Compare numbers
+                });
+    
+                console.log("Selected Card Max Transaction:", selectedCardMaxTxn);
+                if (selectedCardMaxTxn) {
+                    setTransactions([selectedCardMaxTxn]);
+                } else {
+                    console.log("No matching card with max transaction found in Case 3.");
+                    setTransactions([]);
+                }
             } else {
-                // No transactions found for the current card
+                console.log("Handling Default Case: No valid data format matched.");
                 setTransactions([]);
             }
         } catch (error) {
+            console.error("Error fetching transactions:", error.message);
             Toastify({
                 text: `Error fetching transactions: ${error.message}`,
                 duration: 3500,
@@ -102,11 +137,14 @@ const CreditCard = ({ card, user, isAddCard }) => {
                 className: "large-toast",
             }).showToast();
         } finally {
-            setLoadingTransactions(false); // Reset loading state
+            setLoadingTransactions(false);
         }
     };
+    
+    
+    
+    
 
-    // Handle toggle for showing/hiding transactions
     const handleToggleTransactions = () => {
         if (!isActive) {
             Toastify({
@@ -117,84 +155,169 @@ const CreditCard = ({ card, user, isAddCard }) => {
                 backgroundColor: '#FFEFD5',
                 className: "large-toast",
             }).showToast();
-            return; // Don't show transactions for a disabled card
+            return;
         }
-    
+
         setShowTransactions(!showTransactions);
         if (!showTransactions) {
-            fetchTransactions(); // Fetch transactions only when showing them
+            fetchTransactions();
         }
     };
 
-    // If this is the "Add New Card" card, render the Add New Card UI
-    if (isAddCard) {
-        return (
-            <div className="credit-card add-card" onClick={() => alert("Add a new card")}>
-                <div className="plus-icon">+</div>
-                <div className="text">Add New Card</div>
-            </div>
-        );
-    }
+    const handleTransactionFilterChange = (e) => {
+        setFilterType(e.target.value);
+    };
 
-    // Get the background gradient based on card vendor type
+    useEffect(() => {
+        if (showTransactions) {
+            fetchTransactions();  // Trigger fetch when filter changes or when transactions are being displayed
+        }
+    }, [filterType, numTransactions, showTransactions]);
+
+    // Mask the card number and show only the last 4 digits
+    const maskedCardNumber = `**** **** **** ${card.creditCardNumber.slice(-4)}`;
+
+    const toggleCardNumberVisibility = () => {
+        setShowFullNumber((prev) => !prev);
+    };
+
+    useEffect(() => {
+        if (showFullNumber || showCvv) {
+            const timer = setTimeout(() => {
+                setShowFullNumber(false); // Hide full number after 5 seconds
+                setShowCvv(false); // Hide CVV after 5 seconds
+            }, 5000);
+    
+            // Cleanup timer on unmount or when dependencies change
+            return () => clearTimeout(timer);
+        }
+    }, [showFullNumber, showCvv]);
+    
+    const handleModalClose = () => {
+        setShowTransactions(false); // Assuming you're using React state for `showTransactions`
+    };
+    
     const gradientBackground = getRandomGradient(card.wireTransactionVendor);
-    const cardStatusBackground = isActive ? 'green' : 'red'; // Green for active, red for disabled
+    const cardStatusBackground = isActive ? 'green' : 'red';
 
     return (
-        <div className="credit-card" style={{ background: gradientBackground }}>
-            <div className="card-details" onClick={handleToggleTransactions}>
-                <img className="card-type" src={getCardIcon(card.wireTransactionVendor)} alt={card.wireTransactionVendor} />
-                <div className="card-status" style={{ backgroundColor: cardStatusBackground }}>
-                    {isActive ? 'Active' : 'Disabled'}
-                </div>
-                <p className="card-number">{card.creditCardNumber}</p>
-                <div className="card-info">
-                    <p className="expiry">Expiry: {card.expiryMonth}/{card.expiryYear}</p>
-                    <div className="cvv-container">
-                        <p className="cvv">CVV: {showCvv ? card.cvv : '***'}</p>
-                        <button className="show-cvv-button" onClick={handleToggleCvv}>
-                            {showCvv ? 'Hide CVV' : 'Show CVV'}
+        <div className="card-wrapper">
+            
+            <div className="credit-card" style={{ background: gradientBackground }}>
+                <div className="card-details">
+                    <img className="card-type" src={getCardIcon(card.wireTransactionVendor)} alt={card.wireTransactionVendor} />
+                    <div className="card-status" style={{ backgroundColor: cardStatusBackground }}>
+                        {isActive ? 'Active' : 'Disabled'}
+                    </div>
+                    <div className="card-number">
+                        {showFullNumber ? card.creditCardNumber : maskedCardNumber}
+                        <button onClick={toggleCardNumberVisibility} className="eye-button">
+                            {showFullNumber ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </div>
+                    <div className="card-info">
+                        <p className="expiry">Expiry: {card.expiryMonth}/{card.expiryYear}</p>
+                        <div className="cvv-container">
+                            <p className="cvv">CVV: {showCvv ? card.cvv : '***'}</p>
+                            <button className="show-cvv-button" onClick={handleToggleCvv}>
+                                {showCvv ? <FaEyeSlash /> : <FaEye />}
+                            </button>
+                        </div>
+                    </div>
+                    <div className="card-footer">
+                        <p className="cardholder-name">{user.nameOnTheCard || 'Unknown'}</p>
+                    </div>
+                    <div className="card-buttons">
+                        <button onClick={handleToggleStatus} className="toggle-status-button">
+                            {isActive ? 'Disable Card' : 'Enable Card'}
+                        </button>
+                        <button onClick={handleToggleTransactions} className="toggle-transactions-button">
+                            {showTransactions ? 'Hide Transactions' : 'Show Transactions'}
                         </button>
                     </div>
                 </div>
-                <div className="card-footer">
-                    <p className="cardholder-name">{user.nameOnTheCard || 'Unknown'}</p> {/* Display user name on the card */}
-                </div>
             </div>
-            <div className="transactions-container">
-                <button onClick={handleToggleStatus} className="toggle-status-button">
-                    {isActive ? 'Disable Card' : 'Enable Card'}
-                </button>
-                <button 
-                    onClick={handleToggleTransactions} 
-                    className="show-transactions-button"
-                >
-                    {showTransactions ? 'Hide Transactions' : 'Show Transactions'}
-                </button>
-            </div>
-
+    
+            {/* Transactions Modal */}
             {showTransactions && (
-                <div className="transactions">
-                    <h4>Transactions(Top 10):</h4>
-                    {loadingTransactions ? (
-                        <p>Loading transactions...</p>
-                    ) : (
-                        <ul>
-                            {transactions.length > 0 ? (
-                                transactions.map((transaction) => (
-                                    <li key={transaction.transactionId}>
-                                        <Txn transaction={transaction} />
-                                    </li>
-                                ))
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        {/* Close Button */}
+                        <button className="close-modal-button" onClick={handleModalClose}>
+                            &times;
+                        </button>
+    
+                    {/* Header */}
+                    <h2>Transactions</h2>
+                    <p>Card: {maskedCardNumber}</p>
+
+    
+                        {/* Filter Section */}
+                        <div className="transactions-filter-container">
+                            <label htmlFor="transaction-filter">Filter: </label>
+                            <select id="transaction-filter" value={filterType} onChange={handleTransactionFilterChange}>
+                                <option value="all">All Transactions</option>
+                                <option value="topX">Top {numTransactions} Transactions</option>
+                                <option value="maxValue">Max Transaction (Last Month)</option>
+                            </select>
+                        </div>
+    
+                        {/* Transactions List */}
+                        <div className="transactions-list">
+                            {loadingTransactions ? (
+                                <p>Loading transactions...</p>
+                            ) : transactions && transactions.length > 0 ? (
+                                filterType === 'maxValue' ? (
+                                    transactions
+                                        .filter(
+                                            (transaction) =>
+                                                transaction.credit_card?.replace(/-/g, '') ===
+                                                selectedCardNumber?.replace(/-/g, '')
+                                        )
+                                        .map((transaction, index) => (
+                                            <li
+                                                key={transaction.credit_card + index}
+                                                style={{
+                                                    padding: '10px',
+                                                    marginBottom: '10px',
+                                                    border: '1px solid #ccc',
+                                                    borderRadius: '5px',
+                                                    backgroundColor: '#f9f9f9',
+                                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                                                }}
+                                            >
+                                                <p>
+                                                    <strong>Credit Card:</strong> **** **** ****{' '}
+                                                    {transaction.credit_card.slice(-4)}
+                                                </p>
+                                                <p>
+                                                    <strong>Month:</strong> {transaction.month}
+                                                </p>
+                                                <p>
+                                                    <strong>Amount:</strong> $
+                                                    {transaction.amount?.toLocaleString() || 'N/A'}
+                                                </p>
+                                            </li>
+                                        ))
+                                ) : (
+                                    <ul>
+                                        {transactions.map((transaction) => (
+                                            <li key={transaction.transactionId}>
+                                                <Txn transaction={transaction} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )
                             ) : (
                                 <p>No transactions found for this card.</p>
                             )}
-                        </ul>
-                    )}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
     );
+    
 };
 
 export default CreditCard;

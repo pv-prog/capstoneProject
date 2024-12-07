@@ -11,7 +11,9 @@ const Transaction = ({ transaction, card }) => {
         <div className={`transaction ${transaction.transactionType === "cr" ? "credit" : "debit"}`}>
             {/* Transaction Header */}
             <div className="transaction-header">
-                <h4>Card Number: {card.creditCardNumber}</h4> {/* Display Card Number */}
+                <h4>Card Number: **** **** **** {card.creditCardNumber.slice(-4)}</h4> {/* Display Card Number */}
+                
+
                 <p>Type: {card.wireTransactionVendor.toUpperCase()}</p> {/* Display Vendor in uppercase */}
             </div>
 

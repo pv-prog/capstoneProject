@@ -112,24 +112,26 @@ const UserCards = ({ username }) => {
         setShowForm(true);
     };
 
-    // Handle form input changes
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
+   // Handle form input changes
+const handleInputChange = (e) => {
+    const { name, value } = e.target;
 
-        if (name === 'creditCardNumber') {
-            let formattedValue = value.replace(/\D/g, ''); // Remove non-digit characters
-            formattedValue = formattedValue.replace(/(\d{4})(?=\d)/g, '$1-'); // Insert dash after every 4 digits
-            setNewCardData((prevData) => ({
-                ...prevData,
-                [name]: formattedValue,
-            }));
-        } else {
-            setNewCardData((prevData) => ({
-                ...prevData,
-                [name]: value,
-            }));
-        }
-    };
+    // Handle formatting of card numbers (including the confirmation card number)
+    if (name === 'creditCardNumber' || name === 'confirmCreditCardNumber') {
+        let formattedValue = value.replace(/\D/g, ''); // Remove non-digit characters
+        formattedValue = formattedValue.replace(/(\d{4})(?=\d)/g, '$1-'); // Insert dash after every 4 digits
+        setNewCardData((prevData) => ({
+            ...prevData,
+            [name]: formattedValue,
+        }));
+    } else {
+        setNewCardData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    }
+};
+
 
     // Validate the form inputs
     const validateForm = () => {
@@ -251,12 +253,37 @@ const handleSubmit = async (e) => {
         return <p>Loading...</p>;
     }
 
+
     if (!user || !user.creditcards || user.creditcards.length === 0) {
-        return <p>No user data or credit cards found!</p>;
-    }
+        return (
+          <div style={{ 
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            color: 'white', 
+            fontSize: '24px', 
+            zIndex: 9999 
+          }}>
+            <p>Oops! Backend systems are down.Try again after sometime</p>
+          </div>
+        );
+      }
+    
 
     return (
+        
         <div className="user-cards-container">
+             <div className="credit-card-container add-card" onClick={handleAddNewCard}>
+                    <div className="add-card-content">
+                        <span className="text">Add New Card</span>
+                    </div>
+                </div>
             <div className="credit-cards">
                 {user.creditcards.map((card) => (
                     <div key={card.creditCardId} className="credit-card-container">
@@ -264,99 +291,122 @@ const handleSubmit = async (e) => {
                     </div>
                 ))}
 
-                <div className="credit-card-container add-card" onClick={handleAddNewCard}>
-                    <div className="add-card-content">
-                        <span className="text">Add New Card</span>
-                    </div>
-                </div>
+               
             </div>
 
             {/* Add New Card Form Modal */}
             {showForm && (
-                <div className="form-modal">
-                    <div className="form-container">
-                        <h2>Add New Credit Card</h2>
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label htmlFor="creditCardNumber">Card Number</label>
-                                <input
-                                    type="text"
-                                    id="creditCardNumber"
-                                    name="creditCardNumber"
-                                    value={newCardData.creditCardNumber}
-                                    onChange={handleInputChange}
-                                    maxLength="19"
-                                    placeholder="Enter 16-digit card number"
-                                />
-                                {formErrors.creditCardNumber && <span className="error">{formErrors.creditCardNumber}</span>}
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="expiryMonth">Expiry Month</label>
-                                <input
-                                    type="text"
-                                    id="expiryMonth"
-                                    name="expiryMonth"
-                                    value={newCardData.expiryMonth}
-                                    onChange={handleInputChange}
-                                    maxLength="2"
-                                    placeholder="MM"
-                                />
-                                {formErrors.expiryMonth && <span className="error">{formErrors.expiryMonth}</span>}
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="expiryYear">Expiry Year</label>
-                                <input
-                                    type="text"
-                                    id="expiryYear"
-                                    name="expiryYear"
-                                    value={newCardData.expiryYear}
-                                    onChange={handleInputChange}
-                                    maxLength="4"
-                                    placeholder="YYYY"
-                                />
-                                {formErrors.expiryYear && <span className="error">{formErrors.expiryYear}</span>}
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="cvv">CVV</label>
-                                <input
-                                    type="text"
-                                    id="cvv"
-                                    name="cvv"
-                                    value={newCardData.cvv}
-                                    onChange={handleInputChange}
-                                    maxLength="4"
-                                    placeholder="CVV"
-                                />
-                                {formErrors.cvv && <span className="error">{formErrors.cvv}</span>}
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="wireTransactionVendor">Card Type</label>
-                                <select
-                                    id="wireTransactionVendor"
-                                    name="wireTransactionVendor"
-                                    value={newCardData.wireTransactionVendor}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="visa">Visa</option>
-                                    <option value="mastercard">Mastercard</option>
-                                    <option value="rupay">Rupay</option>
-                                    <option value="americanexpress">American Express</option>
-                                </select>
-                                {formErrors.wireTransactionVendor && <span className="error">{formErrors.wireTransactionVendor}</span>}
-                            </div>
-
-                            <div className="form-actions">
-                                <button type="button" className="cancel-btn" onClick={() => setShowForm(false)}>Cancel</button>
-                                <button type="submit" className="submit-btn">Add Card</button>
-                            </div>
-                        </form>
-                    </div>
+    <div className="form-modal">
+        <div className="form-container">
+            <h2>Add New Credit Card</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="creditCardNumber">Card Number</label>
+                    <input
+                        type="text"
+                        id="creditCardNumber"
+                        name="creditCardNumber"
+                        value={newCardData.creditCardNumber}
+                        onChange={handleInputChange}
+                        maxLength="19"
+                        placeholder="Enter 16-digit card number"
+                    />
+                    {formErrors.creditCardNumber && <span className="error">{formErrors.creditCardNumber}</span>}
                 </div>
-            )}
+
+                <div className="form-group">
+                    <label htmlFor="confirmCreditCardNumber">Confirm Card Number</label>
+                    <input
+                        type="text"
+                        id="confirmCreditCardNumber"
+                        name="confirmCreditCardNumber"
+                        value={newCardData.confirmCreditCardNumber}
+                        onChange={handleInputChange}
+                        maxLength="19"
+                        placeholder="Confirm 16-digit card number"
+                    />
+                    {formErrors.confirmCreditCardNumber && <span className="error">{formErrors.confirmCreditCardNumber}</span>}
+                </div>
+
+                {/* Check if both card numbers match */}
+                {newCardData.creditCardNumber && newCardData.confirmCreditCardNumber && newCardData.creditCardNumber !== newCardData.confirmCreditCardNumber && (
+                    <span className="error">Card numbers do not match!</span>
+                )}
+
+                <div className="form-group">
+                    <label htmlFor="expiryMonth">Expiry Month</label>
+                    <input
+                        type="text"
+                        id="expiryMonth"
+                        name="expiryMonth"
+                        value={newCardData.expiryMonth}
+                        onChange={handleInputChange}
+                        maxLength="2"
+                        placeholder="MM"
+                    />
+                    {formErrors.expiryMonth && <span className="error">{formErrors.expiryMonth}</span>}
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="expiryYear">Expiry Year</label>
+                    <input
+                        type="text"
+                        id="expiryYear"
+                        name="expiryYear"
+                        value={newCardData.expiryYear}
+                        onChange={handleInputChange}
+                        maxLength="4"
+                        placeholder="YYYY"
+                    />
+                    {formErrors.expiryYear && <span className="error">{formErrors.expiryYear}</span>}
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="cvv">CVV</label>
+                    <input
+                        type="text"
+                        id="cvv"
+                        name="cvv"
+                        value={newCardData.cvv}
+                        onChange={handleInputChange}
+                        maxLength="4"
+                        placeholder="CVV"
+                    />
+                    {formErrors.cvv && <span className="error">{formErrors.cvv}</span>}
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="wireTransactionVendor">Card Type</label>
+                    <select
+                        id="wireTransactionVendor"
+                        name="wireTransactionVendor"
+                        value={newCardData.wireTransactionVendor}
+                        onChange={handleInputChange}
+                    >
+                        <option value="visa">Visa</option>
+                        <option value="mastercard">Mastercard</option>
+                        <option value="rupay">Rupay</option>
+                        <option value="americanexpress">American Express</option>
+                    </select>
+                    {formErrors.wireTransactionVendor && <span className="error">{formErrors.wireTransactionVendor}</span>}
+                </div>
+
+                <div className="form-actions">
+                    <button type="button" className="cancel-btn" onClick={() => setShowForm(false)}>Cancel</button>
+                    {/* Disable submit if card numbers don't match */}
+                    <button 
+                        type="submit" 
+                        className="submit-btn" 
+                        disabled={newCardData.creditCardNumber !== newCardData.confirmCreditCardNumber}
+                    >
+                        Add Card
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+)}
+
 
             <div className="transactions-container">
                 <h3>Top 10 Transactions</h3>
