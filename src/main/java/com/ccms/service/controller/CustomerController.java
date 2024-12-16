@@ -29,15 +29,23 @@ public class CustomerController {
 
 		// Handle validation failure explicitly
 		
-		String username = new String(Base64.getDecoder().decode(encodedusername));
-
-		if (username == null || username.trim().isEmpty()) {
+		String username = null;
+		
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
 		}
 
-		if (username.length() > 25) {
+		if (encodedusername.length() > 25) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must not exceed 25 characters");
 		}
+		
+		try {
+		    username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+	
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user name");
+		}
+
 
 		try {
 			// Call the service layer to fetch the customer profile
