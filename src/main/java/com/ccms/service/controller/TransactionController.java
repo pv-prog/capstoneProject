@@ -1,5 +1,6 @@
 package com.ccms.service.controller;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ccms.service.model.Transaction;
 import com.ccms.service.model.Transaction.TransactionDetail;
 import com.ccms.service.service.TransactionService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -29,10 +29,12 @@ public class TransactionController {
 	TransactionService transactionService;
 
 	@Operation(summary = "Get all Transactions", description = "Show all transactions for every card associated with the given customer")
-	@GetMapping("/{username}")
-	public ResponseEntity<?> gettransactionsforuser(@PathVariable("username") String username) {
+	@GetMapping("/{encodedusername}")
+	public ResponseEntity<?> gettransactionsforuser(@PathVariable("encodedusername") String encodedusername) {
 
 		// Handle validation failure explicitly
+		
+		String username = new String(Base64.getDecoder().decode(encodedusername));
 
 		if (username == null || username.trim().isEmpty()) {
 
@@ -70,12 +72,14 @@ public class TransactionController {
 	}
 
 	@Operation(summary = "Retrieve the maximum expenses", description = "View the maximum expenses for all cards of the given customer in the last month")
-	@GetMapping("/maxExpenses/lastMonth/{username}")
+	@GetMapping("/maxExpenses/lastMonth/{encodedusername}")
 	public ResponseEntity<List<Map<String, Object>>> getMaxExpensesForLastMonth(
-			@PathVariable("username") String username,
+			@PathVariable("encodedusername") String encodedusername,
 			@RequestParam(required = false, defaultValue = "both") String status) {
 
 		// Username validation: Check if it's null, empty, or exceeds max length
+		
+		String username = new String(Base64.getDecoder().decode(encodedusername));
 
 		if (username == null || username.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -118,14 +122,17 @@ public class TransactionController {
 	}
 
 	@Operation(summary = "Retrieve the high-value expenses", description = "View the high-value expenses for all cards of the given customer that exceed the specified threshold")
-	@GetMapping("/highvalue/expenses/{username}")
+	@GetMapping("/highvalue/expenses/{encodedusername}")
 	public ResponseEntity<?> getHighValueExpenses(
-			@PathVariable("username") String username,
+			@PathVariable("encodedusername") String encodedusername,
 			@RequestParam(required = false, defaultValue = "1") int limit,
 			@RequestParam(required = false, defaultValue = "both") String status,
 			@RequestParam double amountThreshold) {
 
 		// Validate username
+		
+		String username = new String(Base64.getDecoder().decode(encodedusername));
+		
 		if (username == null || username.trim().isEmpty()) {
 			return buildErrorResponse("Username cannot be null or empty");
 		}
@@ -176,12 +183,16 @@ public class TransactionController {
 	}
 
 	@Operation(summary = "Retrieve the last X expenses for all cards.", description = "View the last X expenses for all cards associated with the given customer")
-	@GetMapping("/lastXTransactions/{username}")
-	public ResponseEntity<?> getLastXTransactionsForUser(@PathVariable("username") String username,
+	@GetMapping("/lastXTransactions/{encodedusername}")
+	public ResponseEntity<?> getLastXTransactionsForUser(@PathVariable("encodedusername") String encodedusername,
 			@RequestParam(required = false, defaultValue = "1") int limit,
 			@RequestParam(required = false, defaultValue = "both") String status) {
 
 		// Validate the username
+		
+		String username = new String(Base64.getDecoder().decode(encodedusername));
+		
+		
 		if (username == null || username.trim().isEmpty()) {
 			return buildErrorResponse("Username cannot be null or empty");
 		}
@@ -226,12 +237,15 @@ public class TransactionController {
 	}
 
 	@Operation(summary = "For Backend - Retrieve the last X expenses for all cards.", description = "View the last X expenses for all cards associated with the given customer")
-	@GetMapping("/lastXExpenses/{username}")
-	public ResponseEntity<?> getLastXExpensesForUser(@PathVariable("username") String username,
+	@GetMapping("/lastXExpenses/{encodedusername}")
+	public ResponseEntity<?> getLastXExpensesForUser(@PathVariable("encodedusername") String encodedusername,
 			@RequestParam(required = false, defaultValue = "1") int limit,
 			@RequestParam(required = false, defaultValue = "both") String status) {
 
 		// Validate the username
+		
+		String username = new String(Base64.getDecoder().decode(encodedusername));
+		
 		if (username == null || username.trim().isEmpty()) {
 			return buildErrorResponse("Username cannot be null or empty");
 		}
