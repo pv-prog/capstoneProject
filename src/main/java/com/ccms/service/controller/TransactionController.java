@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ccms.service.model.Transaction;
 import com.ccms.service.model.Transaction.TransactionDetail;
 import com.ccms.service.service.TransactionService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -34,15 +35,21 @@ public class TransactionController {
 
 		// Handle validation failure explicitly
 		
-		String username = new String(Base64.getDecoder().decode(encodedusername));
-
-		if (username == null || username.trim().isEmpty()) {
-
-			return buildErrorResponse("Username cannot be null or empty");
+		String username = null;
+		
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
 		}
 
-		if (username.length() > 25) {
-			return buildErrorResponse("Username must not exceed 25 characters");
+		if (encodedusername.length() > 25) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must not exceed 25 characters");
+		}
+		
+		try {
+		    username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+	
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user name");
 		}
 
 		try {
@@ -79,18 +86,27 @@ public class TransactionController {
 
 		// Username validation: Check if it's null, empty, or exceeds max length
 		
-		String username = new String(Base64.getDecoder().decode(encodedusername));
-
-		if (username == null || username.trim().isEmpty()) {
+		String username = null;
+		
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(List.of(Map.of("error", "Username cannot be null or empty")));
 		}
 
-		if (username.length() > 25) {
+		if (encodedusername.length() > 25) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(List.of(Map.of("error", "Username must not exceed 25 characters")));
 		}
+		
+		try {
+			username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+	
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(List.of(Map.of("error", "Invalid user name")));
+		}
 
+		
 		// Status validation: Valid statuses are "enabled", "disabled", and "both"
 		List<String> validStatuses = List.of("enabled", "disabled", "both");
 		if (!validStatuses.contains(status)) {
@@ -131,16 +147,23 @@ public class TransactionController {
 
 		// Validate username
 		
-		String username = new String(Base64.getDecoder().decode(encodedusername));
+		String username = null;
 		
-		if (username == null || username.trim().isEmpty()) {
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
 			return buildErrorResponse("Username cannot be null or empty");
 		}
 
-		if (username.length() > 25) {
+		if (encodedusername.length() > 25) {
 			return buildErrorResponse("Username must not exceed 25 characters");
 		}
 
+		try {
+		    username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+	
+			return buildErrorResponse("Invalid user name");
+		}
+		
 		// Validate the limit to ensure it's a positive integer greater than 0
 		if (limit <= 0) {
 			return buildErrorResponse("The 'limit' parameter must be a positive integer greater than 0.");
@@ -190,17 +213,23 @@ public class TransactionController {
 
 		// Validate the username
 		
-		String username = new String(Base64.getDecoder().decode(encodedusername));
+		String username = null;
 		
-		
-		if (username == null || username.trim().isEmpty()) {
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
 			return buildErrorResponse("Username cannot be null or empty");
 		}
 
-		if (username.length() > 25) {
+		if (encodedusername.length() > 25) {
 			return buildErrorResponse("Username must not exceed 25 characters");
 		}
 
+		try {
+		    username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+	
+			return buildErrorResponse("Invalid user name");
+		}
+		
 		// Validate the limit to ensure it's a positive integer greater than 0
 		if (limit <= 0) {
 			return buildErrorResponse("The 'limit' parameter must be a positive integer greater than 0.");
@@ -244,16 +273,23 @@ public class TransactionController {
 
 		// Validate the username
 		
-		String username = new String(Base64.getDecoder().decode(encodedusername));
+		String username = null;
 		
-		if (username == null || username.trim().isEmpty()) {
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
 			return buildErrorResponse("Username cannot be null or empty");
 		}
 
-		if (username.length() > 25) {
+		if (encodedusername.length() > 25) {
 			return buildErrorResponse("Username must not exceed 25 characters");
 		}
 
+		try {
+		    username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+	
+			return buildErrorResponse("Invalid user name");
+		}
+		
 		// Validate the limit to ensure it's a positive integer greater than 0
 		if (limit <= 0) {
 			return buildErrorResponse("The 'limit' parameter must be a positive integer greater than 0.");
