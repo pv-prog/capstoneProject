@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +30,8 @@ public class CreditCard {
 	@Data
 	public static class CreditCardDetail {
 
+	//	@JsonIgnore  
+		@Schema(hidden = true)
 		private int creditCardId;
 		private String creditCardNumber;
 		private int expiryMonth;

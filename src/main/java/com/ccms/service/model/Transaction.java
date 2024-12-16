@@ -41,6 +41,7 @@ public class Transaction {
 		private String transactionTime;
 		private String transactionType; // cr or db
 		private double transactionAmount;
+		private String transactionDesc;
 
 	}
 

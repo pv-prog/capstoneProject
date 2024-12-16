@@ -3,59 +3,59 @@ package com.ccms.service.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
-import com.ccms.service.model.CreditCard;
 import com.ccms.service.model.Customer;
-import com.ccms.service.model.Transaction;
-import com.ccms.service.service.CreditCardService;
 import com.ccms.service.service.CustomerService;
-import com.ccms.service.service.TransactionService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Customer Controller", description = "Controller for managing Customers")
 @RestController
+@Validated
 @RequestMapping("/api/customer")
 public class CustomerController {
 
 	@Autowired
 	CustomerService customerService;
 
-//	@Autowired
-//	CreditCardService creditCardService;
-//
-//	@Autowired
-//	TransactionService transactionService;
-
 	@Operation(summary = "Get Customer Profile", description = "Show the profile details for the specified customer")
 	@GetMapping("/{username}")
-	public Customer getCustomer(@PathVariable("username") String username) {
+	public ResponseEntity<?> getCustomer(@PathVariable("username") String username) {
 
-		System.out.println(customerService.getCustomer(username));
+		// Handle validation failure explicitly
 
-		return customerService.getCustomer(username);
+		if (username == null || username.trim().isEmpty()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
+		}
 
+		if (username.length() > 25) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must not exceed 25 characters");
+		}
+
+		try {
+			// Call the service layer to fetch the customer profile
+			Customer customer = customerService.getCustomer(username);
+
+			// If no customer is found, return 404 Not Found
+			if (customer == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found for username: " + username);
+			}
+
+			// Return the customer profile data if found
+			return ResponseEntity.ok(customer);
+
+		} catch (Exception e) {
+			// Log the exception for debugging
+			e.printStackTrace();
+
+			// Return a 500 Internal Server Error with the exception message
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("An error occurred while fetching the customer profile: " + e.getMessage());
+		}
 	}
-
-////Rest Template for Microservices
-//	@Autowired
-//	
-//	RestTemplate restTemplate;
-//	
-//	@GetMapping("/order")
-////	@CircuitBreaker(name="ORDER_SERVICE" ,fallbackMethod="orderFallback")
-//	public ResponseEntity<String> getOrder()
-//	{
-//		String response=restTemplate.getForObject("http://localhost:9009/item",String.class);
-//	//String response=restTemplate.getForObject("http://ITEM-SERVICE/item",String.class);
-//		return new ResponseEntity<String>(response,HttpStatus.OK);
-//		
-//	}
 
 }
