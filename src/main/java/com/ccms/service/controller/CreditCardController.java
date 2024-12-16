@@ -1,6 +1,7 @@
 package com.ccms.service.controller;
 
 import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ccms.service.model.CreditCard;
 import com.ccms.service.model.CreditCard.CreditCardDetail;
 import com.ccms.service.service.CreditCardService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -30,23 +32,31 @@ public class CreditCardController {
 
 	@Operation(summary = "Get all Creditcards", description = "Provides a list of all credit cards associated with the given customer")
 	@GetMapping("/listcreditcards/{encodedusername}")
-	public ResponseEntity<?> getCreditCardsForUser(@PathVariable("encodedusername") String encodedusername,@RequestParam boolean showFullNumber) {
+	public ResponseEntity<?> getCreditCardsForUser(@PathVariable("encodedusername") String encodedusername,
+			@RequestParam boolean showFullNumber) {
 
 		// Handle validation failure explicitly
 
-		String username = new String(Base64.getDecoder().decode(encodedusername));
-		
-		if (username == null || username.trim().isEmpty()) {
+		String username = null;
+
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
 		}
 
-		if (username.length() > 25) {
+		if (encodedusername.length() > 25) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must not exceed 25 characters");
 		}
 
 		try {
+			username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user name");
+		}
+
+		try {
 			// Call the service layer to fetch the credit cards for the given user
-			CreditCard creditCards = creditCardService.getCreditcardforuser(username,showFullNumber);
+			CreditCard creditCards = creditCardService.getCreditcardforuser(username, showFullNumber);
 
 			// If no credit cards are found, return 404 Not Found
 			if (creditCards == null) {
@@ -72,16 +82,22 @@ public class CreditCardController {
 			@RequestBody CreditCard.CreditCardDetail creditCardDetail) {
 
 		// Handle validation for username explicitly
-		
-		String username = new String(Base64.getDecoder().decode(encodedusername));
-		
 
-		if (username == null || username.trim().isEmpty()) {
+		String username = null;
+
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
 		}
 
-		if (username.length() > 25) {
+		if (encodedusername.length() > 25) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must not exceed 25 characters");
+		}
+
+		try {
+			username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user name");
 		}
 
 		// Handle validation for credit card details
@@ -97,12 +113,12 @@ public class CreditCardController {
 			// credit card
 			return ResponseEntity.status(HttpStatus.CREATED).body(updatedCreditCard);
 
-		}  catch (IllegalArgumentException ex) {
-	 
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                             .body("An error occurred while adding the credit card: " + ex.getMessage());
-	    }
-		
+		} catch (IllegalArgumentException ex) {
+
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("An error occurred while adding the credit card: " + ex.getMessage());
+		}
+
 		catch (Exception e) {
 			// Log the exception for debugging
 			e.printStackTrace();
@@ -117,17 +133,22 @@ public class CreditCardController {
 	@PutMapping("/togglecreditcard/{encodedusername}/{creditCardId}/toggle")
 	public ResponseEntity<String> toggleCreditCardStatus(@PathVariable("encodedusername") String encodedusername,
 			@PathVariable("creditCardId") int creditCardId) {
-		
-		String username = new String(Base64.getDecoder().decode(encodedusername));
-		
-		
-		// Handle validation for username explicitly
-		if (username == null || username.trim().isEmpty()) {
+
+		String username = null;
+
+		if (encodedusername == null || encodedusername.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
 		}
 
-		if (username.length() > 25) {
+		if (encodedusername.length() > 25) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must not exceed 25 characters");
+		}
+
+		try {
+			username = new String(Base64.getDecoder().decode(encodedusername));
+		} catch (IllegalArgumentException e) {
+
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user name");
 		}
 
 		try {
