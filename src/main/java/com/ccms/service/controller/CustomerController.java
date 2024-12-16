@@ -1,5 +1,6 @@
 package com.ccms.service.controller;
 
+import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,12 @@ public class CustomerController {
 	CustomerService customerService;
 
 	@Operation(summary = "Get Customer Profile", description = "Show the profile details for the specified customer")
-	@GetMapping("/{username}")
-	public ResponseEntity<?> getCustomer(@PathVariable("username") String username) {
+	@GetMapping("/{encodedusername}")
+	public ResponseEntity<?> getCustomer(@PathVariable("encodedusername") String encodedusername) {
 
 		// Handle validation failure explicitly
+		
+		String username = new String(Base64.getDecoder().decode(encodedusername));
 
 		if (username == null || username.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
