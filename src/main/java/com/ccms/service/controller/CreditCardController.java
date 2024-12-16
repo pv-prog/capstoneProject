@@ -1,5 +1,6 @@
 package com.ccms.service.controller;
 
+import java.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ccms.service.model.CreditCard;
 import com.ccms.service.model.CreditCard.CreditCardDetail;
 import com.ccms.service.service.CreditCardService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -29,11 +29,13 @@ public class CreditCardController {
 	private CreditCardService creditCardService;
 
 	@Operation(summary = "Get all Creditcards", description = "Provides a list of all credit cards associated with the given customer")
-	@GetMapping("/listcreditcards/{username}")
-	public ResponseEntity<?> getCreditCardsForUser(@PathVariable("username") String username,@RequestParam boolean showFullNumber) {
+	@GetMapping("/listcreditcards/{encodedusername}")
+	public ResponseEntity<?> getCreditCardsForUser(@PathVariable("encodedusername") String encodedusername,@RequestParam boolean showFullNumber) {
 
 		// Handle validation failure explicitly
 
+		String username = new String(Base64.getDecoder().decode(encodedusername));
+		
 		if (username == null || username.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
 		}
@@ -65,11 +67,14 @@ public class CreditCardController {
 	}
 
 	@Operation(summary = "Add new Creditcards", description = "Add new credit cards for the specified customer")
-	@PostMapping("/addcreditcard/{username}")
-	public ResponseEntity<?> addCreditCard(@PathVariable("username") String username,
+	@PostMapping("/addcreditcard/{encodedusername}")
+	public ResponseEntity<?> addCreditCard(@PathVariable("encodedusername") String encodedusername,
 			@RequestBody CreditCard.CreditCardDetail creditCardDetail) {
 
 		// Handle validation for username explicitly
+		
+		String username = new String(Base64.getDecoder().decode(encodedusername));
+		
 
 		if (username == null || username.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
@@ -109,10 +114,13 @@ public class CreditCardController {
 	}
 
 	@Operation(summary = "Toggle Creditcards Status", description = "Update the status (Active/Inactive) of the credit cards for the given customer")
-	@PutMapping("/togglecreditcard/{username}/{creditCardId}/toggle")
-	public ResponseEntity<String> toggleCreditCardStatus(@PathVariable("username") String username,
+	@PutMapping("/togglecreditcard/{encodedusername}/{creditCardId}/toggle")
+	public ResponseEntity<String> toggleCreditCardStatus(@PathVariable("encodedusername") String encodedusername,
 			@PathVariable("creditCardId") int creditCardId) {
-
+		
+		String username = new String(Base64.getDecoder().decode(encodedusername));
+		
+		
 		// Handle validation for username explicitly
 		if (username == null || username.trim().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username cannot be null or empty");
