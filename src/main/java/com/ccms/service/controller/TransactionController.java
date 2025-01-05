@@ -1,5 +1,7 @@
 package com.ccms.service.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +13,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ccms.service.exception.InvalidUsernameFormatException;
 import com.ccms.service.model.Transaction;
 import com.ccms.service.model.Transaction.TransactionDetail;
 import com.ccms.service.service.TransactionService;
+import com.ccms.service.utilities.Decodename;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 
 @Tag(name = "Transaction Controller", description = "Controller for managing Customers Creditcard Transactions")
 @RestController
@@ -25,23 +29,21 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/customer/transactions")
 public class TransactionController {
 
+	private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);
+
 	@Autowired
 	TransactionService transactionService;
 
+	@Autowired
+	private Decodename decodename;
+
 	@Operation(summary = "Get all Transactions", description = "Show all transactions for every card associated with the given customer")
 	@GetMapping("/{username}")
-	public ResponseEntity<?> gettransactionsforuser(@PathVariable("username") String username) {
+	public ResponseEntity<?> gettransactionsforuser(@PathVariable("username") String encodedusername) {
 
 		// Handle validation failure explicitly
 
-		if (username == null || username.trim().isEmpty()) {
-
-			return buildErrorResponse("Username cannot be null or empty");
-		}
-
-		if (username.length() > 25) {
-			return buildErrorResponse("Username must not exceed 25 characters");
-		}
+		String username = decodeUsername(encodedusername);
 
 		try {
 			// Call the service layer to fetch transactions
@@ -60,7 +62,8 @@ public class TransactionController {
 			return ResponseEntity.ok(transaction);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+
+			logger.error("An error occurred while fetching the credit card transactions", e);
 
 			// Return a 500 Internal Server Error with the exception message
 
@@ -72,26 +75,19 @@ public class TransactionController {
 	@Operation(summary = "Retrieve the maximum expenses", description = "View the maximum expenses for all cards of the given customer in the last month")
 	@GetMapping("/maxExpenses/lastMonth/{username}")
 	public ResponseEntity<List<Map<String, Object>>> getMaxExpensesForLastMonth(
-			@PathVariable("username") String username,
+			@PathVariable("username") String encodedusername,
 			@RequestParam(required = false, defaultValue = "both") String status) {
 
 		// Username validation: Check if it's null, empty, or exceeds max length
 
-		if (username == null || username.trim().isEmpty()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(List.of(Map.of("error", "Username cannot be null or empty")));
-		}
-
-		if (username.length() > 25) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(List.of(Map.of("error", "Username must not exceed 25 characters")));
-		}
+		String username = decodeUsername(encodedusername);
 
 		// Status validation: Valid statuses are "enabled", "disabled", and "both"
 		List<String> validStatuses = List.of("enabled", "disabled", "both");
 		if (!validStatuses.contains(status)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(List
 					.of(Map.of("error", "Invalid status value. Valid values are 'enabled', 'disabled', or 'both'")));
+
 		}
 
 		try {
@@ -99,7 +95,7 @@ public class TransactionController {
 			List<Map<String, Object>> maxExpenses = transactionService.getMaxExpensesForLastMonth(username, status);
 
 			// If no expenses are found, return a 204 No Content response
-			if (maxExpenses.isEmpty() || maxExpenses == null) {
+			if (maxExpenses.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 			}
 
@@ -119,20 +115,14 @@ public class TransactionController {
 
 	@Operation(summary = "Retrieve the high-value expenses", description = "View the high-value expenses for all cards of the given customer that exceed the specified threshold")
 	@GetMapping("/highvalue/expenses/{username}")
-	public ResponseEntity<?> getHighValueExpenses(
-			@PathVariable("username") String username,
+	public ResponseEntity<?> getHighValueExpenses(@PathVariable("username") String encodedusername,
 			@RequestParam(required = false, defaultValue = "1") int limit,
 			@RequestParam(required = false, defaultValue = "both") String status,
 			@RequestParam double amountThreshold) {
 
 		// Validate username
-		if (username == null || username.trim().isEmpty()) {
-			return buildErrorResponse("Username cannot be null or empty");
-		}
 
-		if (username.length() > 25) {
-			return buildErrorResponse("Username must not exceed 25 characters");
-		}
+		String username = decodeUsername(encodedusername);
 
 		// Validate the limit to ensure it's a positive integer greater than 0
 		if (limit <= 0) {
@@ -157,7 +147,7 @@ public class TransactionController {
 					.getHighValueExpensesForUser(username, limit, status, amountThreshold);
 
 			// If no expenses are found, return 204 No Content
-			if (highValueExpenses.isEmpty() || highValueExpenses == null) {
+			if (highValueExpenses.isEmpty()) {
 
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 			}
@@ -177,18 +167,13 @@ public class TransactionController {
 
 	@Operation(summary = "Retrieve the last X expenses for all cards.", description = "View the last X expenses for all cards associated with the given customer")
 	@GetMapping("/lastXTransactions/{username}")
-	public ResponseEntity<?> getLastXTransactionsForUser(@PathVariable("username") String username,
+	public ResponseEntity<?> getLastXTransactionsForUser(@PathVariable("username") String encodedusername,
 			@RequestParam(required = false, defaultValue = "1") int limit,
 			@RequestParam(required = false, defaultValue = "both") String status) {
 
 		// Validate the username
-		if (username == null || username.trim().isEmpty()) {
-			return buildErrorResponse("Username cannot be null or empty");
-		}
 
-		if (username.length() > 25) {
-			return buildErrorResponse("Username must not exceed 25 characters");
-		}
+		String username = decodeUsername(encodedusername);
 
 		// Validate the limit to ensure it's a positive integer greater than 0
 		if (limit <= 0) {
@@ -227,18 +212,13 @@ public class TransactionController {
 
 	@Operation(summary = "For Backend - Retrieve the last X expenses for all cards.", description = "View the last X expenses for all cards associated with the given customer")
 	@GetMapping("/lastXExpenses/{username}")
-	public ResponseEntity<?> getLastXExpensesForUser(@PathVariable("username") String username,
+	public ResponseEntity<?> getLastXExpensesForUser(@PathVariable("username") String encodedusername,
 			@RequestParam(required = false, defaultValue = "1") int limit,
 			@RequestParam(required = false, defaultValue = "both") String status) {
 
 		// Validate the username
-		if (username == null || username.trim().isEmpty()) {
-			return buildErrorResponse("Username cannot be null or empty");
-		}
 
-		if (username.length() > 25) {
-			return buildErrorResponse("Username must not exceed 25 characters");
-		}
+		String username = decodeUsername(encodedusername);
 
 		// Validate the limit to ensure it's a positive integer greater than 0
 		if (limit <= 0) {
@@ -272,6 +252,17 @@ public class TransactionController {
 			// Log exception for debugging
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(List.of(Map.of("error", "An unexpected error occurred. Please try again later")));
+		}
+	}
+
+	// Helper method to decode username
+
+	private String decodeUsername(String encodedusername) {
+		try {
+			return decodename.decodeUsername(encodedusername);
+		} catch (InvalidUsernameFormatException e) {
+			logger.error("Failed to decode username: {}...", encodedusername.substring(0, 3), e);
+			throw e;
 		}
 	}
 

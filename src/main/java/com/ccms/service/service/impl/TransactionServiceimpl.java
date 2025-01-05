@@ -9,11 +9,18 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import com.ccms.service.model.Transaction;
-import com.ccms.service.exception.UserNotFoundException;
+import com.ccms.service.exception.CreditCardNotFoundException;
+import com.ccms.service.exception.CustomerNotFoundException;
+import com.ccms.service.exception.TransactionNotFoundException;
 import com.ccms.service.model.CreditCard.CreditCardDetail;
 import com.ccms.service.model.Transaction.CreditCardTransaction;
 import com.ccms.service.model.Transaction.TransactionDetail;
@@ -26,6 +33,8 @@ import com.ccms.service.utilities.CreditCardFormatter;
 
 @Service
 public class TransactionServiceimpl implements TransactionService {
+
+	private static final Logger logger = LoggerFactory.getLogger(TransactionServiceimpl.class);
 
 	@Autowired
 	private CreditCardService cardService; // To fetch credit cards
@@ -52,76 +61,24 @@ public class TransactionServiceimpl implements TransactionService {
 	public List<Map<String, Object>> getMaxExpensesForLastMonth(String username, String statusFilter) {
 
 		// Retrieve all active credit cards for the user
-		System.out.println("Entering getMaxExpensesForLastMonth");
+		logger.info("Entering getMaxExpensesForLastMonth");
 
-		List<CreditCardDetail> activecreditcards = new ArrayList<>();
+		List<CreditCardDetail> activeCreditCards = getActiveCreditCardsForUser(username, statusFilter);
 
-		try {
-			// Attempt to retrieve the user's active credit cards
-			activecreditcards = cardService.getallCreditcardsforuser(username).getCreditcards();
-
-			// Check if the user was found
-			if (activecreditcards == null || activecreditcards.isEmpty()) {
-				throw new UserNotFoundException(username); // Throw exception if no active credit cards are found
-			}
-
-		} catch (UserNotFoundException e) {
-
-			// Handle user not found exception separately, if needed
-			System.err.println(e.getMessage());
-			return Collections.emptyList(); // Optionally, return an empty list or handle differently
-		} catch (Exception e) {
-
-			// Handle other exceptions, such as database connection issues
-			System.err.println("Error retrieving credit cards for user: " + username);
-			e.printStackTrace();
-			return Collections.emptyList(); // Optionally, return an empty list in case of an error
-		}
-
-		List<CreditCardDetail> filteredCreditCards = activecreditcards.stream().filter(card -> {
-			switch (statusFilter.toLowerCase()) {
-			case "enabled":
-				return card.getStatus().equalsIgnoreCase("enabled");
-			case "disabled":
-				return card.getStatus().equalsIgnoreCase("disabled");
-			case "both":
-				return true; // Include all cards
-			default:
-				throw new IllegalArgumentException("Invalid status filter: " + statusFilter);
-			}
-		}).collect(Collectors.toList());
-
-		List<CreditCardTransaction> cardTransactions = new ArrayList<>();
-
-		try {
-			// Fetch the credit card transactions for the given user
-			cardTransactions = transactionRepository.findByUsername(username).getCreditcards().stream()
-					.collect(Collectors.toList());
-
-			// Check if creditCard is null or if the credit cards list is null
-			if (cardTransactions == null || activecreditcards.isEmpty()) {
-				throw new UserNotFoundException(username);
-
-			}
-		} catch (UserNotFoundException e) {
-			System.err.println(e.getMessage());
+		if (activeCreditCards.isEmpty())
 			return Collections.emptyList();
-		}
 
-		catch (Exception e) {
+		List<CreditCardTransaction> cardTransactions = getTransactionsForUser(username);
 
-			// Handle other exceptions, such as database connection issues
-			System.err.println("Error retrieving Transactions for user: " + username);
-			e.printStackTrace();
-			return Collections.emptyList(); // Optionally, return an empty list in case of an error
-		}
+		if (cardTransactions.isEmpty())
+			return Collections.emptyList();
 
 		// Initialize a map to hold the maximum transaction amount for each card
 		Map<Integer, List<TransactionWithCreditCardInfo>> allTransactionDetails = new HashMap<>();
 
 		// Retrieve transactions for each active credit card
 
-		for (CreditCardDetail creditCardDetail : filteredCreditCards) {
+		for (CreditCardDetail creditCardDetail : activeCreditCards) {
 
 			List<TransactionWithCreditCardInfo> filteredTransactions = cardTransactions.stream()
 					.filter(transaction -> transaction.getCreditCardId() == creditCardDetail.getCreditCardId())
@@ -143,7 +100,7 @@ public class TransactionServiceimpl implements TransactionService {
 		LocalDate startOfLastMonth = now.minusMonths(1).withDayOfMonth(1);
 		LocalDate endOfLastMonth = now.minusMonths(1).withDayOfMonth(now.minusMonths(1).lengthOfMonth());
 
-		System.out.println("Date range: " + startOfLastMonth + " to " + endOfLastMonth);
+		logger.debug("Date range: " + startOfLastMonth + " to " + endOfLastMonth);
 
 		// DateTimeFormatter to extract month name
 		DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM");
@@ -172,19 +129,8 @@ public class TransactionServiceimpl implements TransactionService {
 				Map<String, Object> expenseDetails = new LinkedHashMap<>();
 
 				try {
-
-					String decryptedCreditCardNumber = null;
-
-					try {
-						decryptedCreditCardNumber = cardEnDecryption
-								.decrypt(entry.getValue().get(0).getCreditCardNumber());
-					} catch (Exception e) {
-
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					// Set the decrypted credit card number back into the CreditCard object
+					String decryptedCreditCardNumber = cardEnDecryption
+							.decrypt(entry.getValue().get(0).getCreditCardNumber());
 
 					entry.getValue().get(0).setCreditCardNumber(decryptedCreditCardNumber);
 
@@ -199,8 +145,9 @@ public class TransactionServiceimpl implements TransactionService {
 
 				} catch (Exception e) {
 
-					// Log and handle decryption error
-					throw new RuntimeException("Error decrypting credit card number for user: " + username, e);
+					logger.error("Error decrypting credit card number", e);
+					continue;
+
 				}
 
 			}
@@ -215,77 +162,23 @@ public class TransactionServiceimpl implements TransactionService {
 			String statusFilter, double amountThreshold) {
 
 		// Retrieve all active credit cards for the user
-		System.out.println("Entering getHighValueExpensesForUser");
+		logger.info("Entering getHighValueExpensesForUser");
 
-		List<CreditCardDetail> activecreditcards = new ArrayList<>();
+		List<CreditCardDetail> activeCreditCards = getActiveCreditCardsForUser(username, statusFilter);
 
-		try {
-			// Attempt to retrieve the user's active credit cards
-			activecreditcards = cardService.getallCreditcardsforuser(username).getCreditcards();
-
-			// Check if the user was found
-			if (activecreditcards == null || activecreditcards.isEmpty()) {
-				throw new UserNotFoundException(username); // Throw exception if no active credit cards are found
-			}
-
-		} catch (UserNotFoundException e) {
-
-			// Handle user not found exception separately, if needed
-			System.err.println(e.getMessage());
+		if (activeCreditCards.isEmpty())
 			return Collections.emptyMap();
-		} catch (Exception e) {
 
-			// Handle other exceptions, such as database connection issues
-			System.err.println("Error retrieving credit cards for user: " + username);
-			e.printStackTrace();
+		List<CreditCardTransaction> cardTransactions = getTransactionsForUser(username);
+
+		if (cardTransactions.isEmpty())
 			return Collections.emptyMap();
-		}
-
-		List<CreditCardDetail> filteredCreditCards = activecreditcards.stream().filter(card -> {
-			switch (statusFilter.toLowerCase()) {
-			case "enabled":
-				return card.getStatus().equalsIgnoreCase("enabled");
-			case "disabled":
-				return card.getStatus().equalsIgnoreCase("disabled");
-			case "both":
-				return true;
-			default:
-				throw new IllegalArgumentException("Invalid status filter: " + statusFilter);
-			}
-		}).collect(Collectors.toList());
-
-		// Fetch all transactions for the user in a single query
-
-		List<CreditCardTransaction> cardTransactions = new ArrayList<>();
-
-		try {
-			// Fetch the credit card transactions for the given user
-			cardTransactions = transactionRepository.findByUsername(username).getCreditcards().stream()
-					.collect(Collectors.toList());
-
-			// Check if creditCard is null or if the credit cards list is null
-			if (cardTransactions == null || activecreditcards.isEmpty()) {
-				throw new UserNotFoundException(username);
-
-			}
-		} catch (UserNotFoundException e) {
-			System.err.println(e.getMessage());
-			return Collections.emptyMap();
-		}
-
-		catch (Exception e) {
-
-			// Handle other exceptions, such as database connection issues
-			System.err.println("Error retrieving Transactions for user: " + username);
-			e.printStackTrace();
-			return Collections.emptyMap();
-		}
 
 		// Retrieve transactions for each active credit card
 
 		Map<String, List<Map<String, String>>> allTransactionDetails = new LinkedHashMap();
 
-		for (CreditCardDetail creditCardDetail : filteredCreditCards) {
+		for (CreditCardDetail creditCardDetail : activeCreditCards) {
 
 			// Filter the transactions for this particular credit card
 
@@ -314,16 +207,7 @@ public class TransactionServiceimpl implements TransactionService {
 			if (!filteredTransactions.isEmpty()) {
 
 				try {
-
-					String decryptedCreditCardNumber = null;
-
-					try {
-						decryptedCreditCardNumber = cardEnDecryption.decrypt(creditCardDetail.getCreditCardNumber());
-					} catch (Exception e) {
-
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					String decryptedCreditCardNumber = cardEnDecryption.decrypt(creditCardDetail.getCreditCardNumber());
 
 					String formattedCreditCardNumber = cardFormatter.maskCreditCardNumber(decryptedCreditCardNumber);
 
@@ -331,16 +215,15 @@ public class TransactionServiceimpl implements TransactionService {
 
 				} catch (Exception e) {
 
-					// Log and handle decryption error
-
-					throw new RuntimeException("Error decrypting credit card number for user: " + username, e);
+					logger.error("Error decrypting credit card number for user: " + username, e);
+					continue;
 				}
 
 			}
 		}
 
 		if (allTransactionDetails.isEmpty()) {
-			System.out.println("No high-value transactions found for any card.");
+			logger.info("No high-value transactions found for any card.");
 		}
 
 		return allTransactionDetails;
@@ -354,79 +237,23 @@ public class TransactionServiceimpl implements TransactionService {
 
 		// Retrieve all active credit cards for the user
 
-		System.out.println("Entering getLastXTransactionsForUser");
+		logger.info("Entering getLastXTransactionsForUser");
 
-		List<CreditCardDetail> activecreditcards = new ArrayList<>();
+		List<CreditCardDetail> activeCreditCards = getActiveCreditCardsForUser(username, statusFilter);
 
-		try {
-			// Attempt to retrieve the user's active credit cards
-			activecreditcards = cardService.getallCreditcardsforuser(username).getCreditcards();
-
-			// Check if the user was found
-			if (activecreditcards == null || activecreditcards.isEmpty()) {
-				throw new UserNotFoundException(username); // Throw exception if no active credit cards are found
-			}
-
-		} catch (UserNotFoundException e) {
-
-			// Handle user not found exception separately, if needed
-			System.err.println(e.getMessage());
+		if (activeCreditCards.isEmpty())
 			return Collections.emptyMap();
-		} catch (Exception e) {
 
-			// Handle other exceptions, such as database connection issues
-			System.err.println("Error retrieving credit cards for user: " + username);
-			e.printStackTrace();
+		List<CreditCardTransaction> cardTransactions = getTransactionsForUser(username);
+
+		if (cardTransactions.isEmpty())
 			return Collections.emptyMap();
-		}
-
-		List<CreditCardDetail> filteredCreditCards = activecreditcards.stream().filter(card -> {
-
-			switch (statusFilter.toLowerCase()) {
-
-			case "enabled":
-				return card.getStatus().equalsIgnoreCase("enabled");
-			case "disabled":
-				return card.getStatus().equalsIgnoreCase("disabled");
-			case "both":
-				return true; // Include all cards
-			default:
-				throw new IllegalArgumentException("Invalid status filter: " + statusFilter);
-			}
-		}).collect(Collectors.toList());
-
-		// Fetch all transactions for the user in a single query
-
-		List<CreditCardTransaction> cardTransactions = new ArrayList<>();
-
-		try {
-			// Fetch the credit card transactions for the given user
-			cardTransactions = transactionRepository.findByUsername(username).getCreditcards().stream()
-					.collect(Collectors.toList());
-
-			// Check if creditCard is null or if the credit cards list is null
-			if (cardTransactions == null || activecreditcards.isEmpty()) {
-				throw new UserNotFoundException(username);
-
-			}
-		} catch (UserNotFoundException e) {
-			System.err.println(e.getMessage());
-			return Collections.emptyMap();
-		}
-
-		catch (Exception e) {
-
-			// Handle other exceptions, such as database connection issues
-			System.err.println("Error retrieving Transactions for user: " + username);
-			e.printStackTrace();
-			return Collections.emptyMap();
-		}
 
 		// Retrieve transactions for each active credit card
 
 		Map<Integer, List<TransactionDetail>> allTransactionDetails = new HashMap<>();
 
-		for (CreditCardDetail creditCardDetail : filteredCreditCards) {
+		for (CreditCardDetail creditCardDetail : activeCreditCards) {
 
 			List<TransactionDetail> filteredTransactions = cardTransactions.stream()
 					.filter(transaction -> transaction.getCreditCardId() == creditCardDetail.getCreditCardId())
@@ -469,75 +296,21 @@ public class TransactionServiceimpl implements TransactionService {
 	public List<Map<String, Object>> getLastXExpensesForUser(String username, int limit, String statusFilter) {
 
 		// Retrieve all active credit cards for the user
-		System.out.println("Entering getLastXExpensesForUser");
+		logger.info("Entering getLastXExpensesForUser");
 
-		List<CreditCardDetail> activecreditcards = new ArrayList<>();
+		List<CreditCardDetail> activeCreditCards = getActiveCreditCardsForUser(username, statusFilter);
 
-		try {
-			// Attempt to retrieve the user's active credit cards
-			activecreditcards = cardService.getallCreditcardsforuser(username).getCreditcards();
-
-			// Check if the user was found
-			if (activecreditcards == null || activecreditcards.isEmpty()) {
-				throw new UserNotFoundException(username); // Throw exception if no active credit cards are found
-			}
-
-		} catch (UserNotFoundException e) {
-
-			// Handle user not found exception separately, if needed
-			System.err.println(e.getMessage());
-			return Collections.emptyList(); // Optionally, return an empty list or handle differently
-		} catch (Exception e) {
-
-			// Handle other exceptions, such as database connection issues
-			System.err.println("Error retrieving credit cards for user: " + username);
-			e.printStackTrace();
-			return Collections.emptyList(); // Optionally, return an empty list in case of an error
-		}
-
-		List<CreditCardDetail> filteredCreditCards = activecreditcards.stream().filter(card -> {
-			switch (statusFilter.toLowerCase()) {
-			case "enabled":
-				return card.getStatus().equalsIgnoreCase("enabled");
-			case "disabled":
-				return card.getStatus().equalsIgnoreCase("disabled");
-			case "both":
-				return true; // Include all cards
-			default:
-				throw new IllegalArgumentException("Invalid status filter: " + statusFilter);
-			}
-		}).collect(Collectors.toList());
-
-		// Fetch all transactions for the user in a single query
-
-		List<CreditCardTransaction> cardTransactions = new ArrayList<>();
-
-		try {
-			// Fetch the credit card transactions for the given user
-			cardTransactions = transactionRepository.findByUsername(username).getCreditcards().stream()
-					.collect(Collectors.toList());
-
-			// Check if creditCard is null or if the credit cards list is null
-			if (cardTransactions == null || activecreditcards.isEmpty()) {
-				throw new UserNotFoundException(username);
-
-			}
-		} catch (UserNotFoundException e) {
-			System.err.println(e.getMessage());
+		if (activeCreditCards.isEmpty())
 			return Collections.emptyList();
-		}
 
-		catch (Exception e) {
+		List<CreditCardTransaction> cardTransactions = getTransactionsForUser(username);
 
-			// Handle other exceptions, such as database connection issues
-			System.err.println("Error retrieving Transactions for user: " + username);
-			e.printStackTrace();
-			return Collections.emptyList(); // Optionally, return an empty list in case of an error
-		}
+		if (cardTransactions.isEmpty())
+			return Collections.emptyList();
 
 		List<Map<String, Object>> Maxexpense = new ArrayList<>();
 
-		for (CreditCardDetail creditCardDetail : filteredCreditCards) {
+		for (CreditCardDetail creditCardDetail : activeCreditCards) {
 
 			// Filter the transactions for this particular credit card
 			List<TransactionWithCreditCardInfo> filteredTransactions = cardTransactions.stream()
@@ -566,16 +339,7 @@ public class TransactionServiceimpl implements TransactionService {
 				Map<String, Object> creditCardData = new LinkedHashMap<>();
 
 				try {
-
-					String decryptedCreditCardNumber = null;
-
-					try {
-						decryptedCreditCardNumber = cardEnDecryption.decrypt(creditCardDetail.getCreditCardNumber());
-					} catch (Exception e) {
-
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					String decryptedCreditCardNumber = cardEnDecryption.decrypt(creditCardDetail.getCreditCardNumber());
 
 					String formattedCreditCardNumber = cardFormatter.maskCreditCardNumber(decryptedCreditCardNumber);
 
@@ -586,11 +350,81 @@ public class TransactionServiceimpl implements TransactionService {
 
 				} catch (Exception e) {
 
-					// Log and handle decryption error
-					throw new RuntimeException("Error decrypting credit card number for user: " + username, e);
+					logger.error("Error decrypting credit card number for user: " + username, e);
+					continue;
 				}
+
 			}
 		}
 		return Maxexpense;
 	}
+
+	// Utility method to get the active credit cards for the user
+
+	private List<CreditCardDetail> getActiveCreditCardsForUser(String username, String statusFilter) {
+		logger.info("Entering getActiveCreditCardsForUser");
+
+		List<CreditCardDetail> activeCreditCards = new ArrayList<>();
+
+		try {
+			activeCreditCards = cardService.getAllCreditCardsForUser(username).getCreditcards();
+			if (activeCreditCards == null || activeCreditCards.isEmpty()) {
+				logger.error("No active credit cards found for user: {}", username);
+				throw new CreditCardNotFoundException(username);
+			}
+		} 
+		catch(CustomerNotFoundException e)
+		{
+			logger.error(e.getMessage());
+			return Collections.emptyList(); 
+		}
+		catch (CreditCardNotFoundException e) {
+			logger.error(e.getMessage());
+			return Collections.emptyList(); 
+		} catch (DataAccessException e) {
+			logger.error("Database error while retrieving creditcards", e);
+			return Collections.emptyList();
+		} catch (Exception e) {
+			logger.error("Error retrieving credit cards for user: {}", username);
+			return Collections.emptyList(); // Handle other errors
+		}
+		return activeCreditCards.stream().filter(card -> {
+			switch (statusFilter.toLowerCase()) {
+			case "enabled":
+				return card.getStatus().equalsIgnoreCase("enabled");
+			case "disabled":
+				return card.getStatus().equalsIgnoreCase("disabled");
+			case "both":
+				return true; // Include all cards
+			default:
+				throw new IllegalArgumentException("Invalid status filter: " + statusFilter);
+			}
+		}).collect(Collectors.toList());
+	}
+
+	// Utility method to get transactions for the user
+
+	private List<CreditCardTransaction> getTransactionsForUser(String username) {
+
+		List<CreditCardTransaction> cardTransactions = new ArrayList<>();
+		try {
+			cardTransactions = transactionRepository.findByUsername(username).getCreditcards().stream()
+					.collect(Collectors.toList());
+			if (cardTransactions == null || cardTransactions.isEmpty()) {
+				logger.error("No transactions found for user: {}", username);
+				throw new CreditCardNotFoundException(username);
+			}
+		} catch (TransactionNotFoundException e) {
+			logger.error(e.getMessage());
+			return Collections.emptyList(); // Handle user not found exception
+		} catch (DataAccessException e) {
+			logger.error("Database error while retrieving transactions", e);
+			return Collections.emptyList();
+		} catch (Exception e) {
+			logger.error("Error retrieving Transactions for user: {}", username);
+			return Collections.emptyList();
+		}
+		return cardTransactions;
+	}
+
 }
