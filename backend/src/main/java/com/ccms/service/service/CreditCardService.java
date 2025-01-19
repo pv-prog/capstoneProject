@@ -1,15 +1,24 @@
 package com.ccms.service.service;
 
 import com.ccms.service.model.CreditCard;
+import com.ccms.service.model.CreditCard.CreditCardDetail;
+
+/**
+ * Service interface for managing credit cards associated with a user.
+ * <p>
+ * This service provides methods for performing operations such as fetching credit cards
+ * for a user, adding a new credit card, and toggling the status of a credit card.
+ * </p>
+ */
 
 public interface CreditCardService {
 
-	public CreditCard getCreditcardforuser(String username);
+	public CreditCard getCreditCardForUser(String username,boolean showFullNumber);
 	
-	public CreditCard addCreditCard (String username, CreditCard.CreditCardDetail creditCardDetail);
+	public CreditCardDetail addCreditCard (String username, CreditCard.CreditCardDetail creditCardDetail);
 	
-	public void toggleCreditCardStatus(String username, int creditCardId);
+	public boolean toggleCreditCardStatus(String username, int creditCardId);
 
-	public CreditCard getallCreditcardsforuser(String username);
+	public CreditCard getAllCreditCardsForUser(String username);
 	
 }

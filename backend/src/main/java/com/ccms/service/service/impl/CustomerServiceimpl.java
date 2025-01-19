@@ -7,11 +7,16 @@ import com.ccms.service.model.Customer;
 import com.ccms.service.repository.CustomerRepository;
 import com.ccms.service.service.CustomerService;
 
+/**
+ * Implementation of the {@link CustomerService} interface. This service handles operations related to customer management,
+ * including adding, retrieving, updating, and deleting customer records.
+ */
+
 @Service
 public class CustomerServiceimpl implements CustomerService {
 
 	@Autowired
-	CustomerRepository customerRepository;
+	private CustomerRepository customerRepository;
 
 	@Override
 	public Customer addCustomer(Customer Customer) {

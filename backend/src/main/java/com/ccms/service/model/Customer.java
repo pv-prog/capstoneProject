@@ -11,6 +11,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * Represents a Customer entity.
+ * <p>
+ * This class holds information about a customer, including personal details,
+ * contact information, address, and account status.
+ * </p>
+ * 
+ * The document is stored in the MongoDB collection named "Customer".
+ */
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -34,6 +45,13 @@ public class Customer {
 	private boolean active;
 	private Date createdAt;
 
+    /**
+     * Inner class representing the name of the customer.
+     * <p>
+     * This includes the first name and last name.
+     * </p>
+     */
+	
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Data
@@ -44,6 +62,13 @@ public class Customer {
 
 	}
 
+    /**
+     * Inner class representing the address of the customer.
+     * <p>
+     * This includes the street, city, state, zip code, and country.
+     * </p>
+     */
+	
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Data
