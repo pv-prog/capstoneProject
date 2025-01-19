@@ -1,17 +1,3 @@
-
-## Docker Compose Build and Start Services
-
-To build and start the services using Docker Compose, follow the steps below:
-
-1. Navigate to the project directory:
-
-   cd capstoneProject
-   
-2. Run the docker compose build:
-   
-   docker-compose up --build -d
-
-   
 # Microservices Architecture Contract
 
 **Version**: 1.0  
