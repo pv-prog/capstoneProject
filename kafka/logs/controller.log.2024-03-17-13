@@ -1,0 +1,6 @@
+[2024-03-17 14:02:36,950] INFO [QuorumController id=2] In the new epoch 80, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 14:02:37,033] INFO [QuorumController id=2] In the new epoch 81, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 14:02:37,374] INFO [QuorumController id=2] In the new epoch 82, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 14:02:37,930] INFO [QuorumController id=2] In the new epoch 83, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 14:02:38,443] INFO [QuorumController id=2] In the new epoch 84, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 14:02:38,494] INFO [QuorumController id=2] In the new epoch 84, the leader is 3. (org.apache.kafka.controller.QuorumController)

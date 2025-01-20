@@ -1,0 +1,8 @@
+lowercaseOutputName: true
+lowerCaseOutputLabelNames: true
+whitelistObjectNames:
+  - "kafka.server:type=BrokerTopicMetrics,name=AllTopics"
+  - "kafka.server:type=BrokerTopicMetrics,name=UnderReplicatedPartitions"
+  - "kafka.server:type=BrokerTopicMetrics,name=PartitionCount"
+  - "kafka.consumer:type=ConsumerFetcherManager,clientId=*,name=ConsumerLag"
+  - "kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec"

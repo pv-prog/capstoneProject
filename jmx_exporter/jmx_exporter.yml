@@ -1,0 +1,25 @@
+whitelistObjectNames:
+  - 'kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec'
+  - 'kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec'
+  - 'kafka.consumer:type=ConsumerFetcherManager,clientId=*'
+  - 'kafka.consumer:type=ConsumerCoordinator,clientId=*'
+  - 'kafka.consumer:type=Fetchers,clientId=*'
+  - 'kafka.consumer:type=ConsumerFetcherManager,clientId=*,topic=*'
+  - 'kafka.server:type=BrokerTopicMetrics,name=BytesOutPerSec'
+  - 'kafka.server:type=BrokerTopicMetrics,name=MessagesOutPerSec'
+  - 'kafka.server:type=BrokerTopicMetrics,name=TotalProduceRequestsPerSec'
+  - 'kafka.server:type=BrokerTopicMetrics,name=TotalFetchRequestsPerSec'
+  - 'kafka.consumer:type=ConsumerLag,clientId=*'
+
+# Optional: Add extra rules to help with better metric names
+rules:
+  - pattern: 'kafka.server<type=(\w+),name=(\w+)><>(\w+)'
+    name: kafka_$1_$2_$3
+    labels:
+      cluster: '$1'
+
+  - pattern: 'kafka.consumer<type=ConsumerFetcherManager,clientId=(.*),topic=(.*)><>(.*)'
+    name: kafka_consumer_fetcher_manager_$3
+    labels:
+      clientId: "$1"
+      topic: "$2"

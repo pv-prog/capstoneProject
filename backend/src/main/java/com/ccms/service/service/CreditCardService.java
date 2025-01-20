@@ -1,15 +1,16 @@
 package com.ccms.service.service;
 
 import com.ccms.service.model.CreditCard;
+import com.ccms.service.model.CreditCard.CreditCardDetail;
 
 public interface CreditCardService {
 
-	public CreditCard getCreditcardforuser(String username);
+	public CreditCard getCreditCardForUser(String username,boolean showFullNumber);
 	
-	public CreditCard addCreditCard (String username, CreditCard.CreditCardDetail creditCardDetail);
+	public CreditCardDetail addCreditCard (String username, CreditCard.CreditCardDetail creditCardDetail);
 	
-	public void toggleCreditCardStatus(String username, int creditCardId);
+	public boolean toggleCreditCardStatus(String username, int creditCardId);
 
-	public CreditCard getallCreditcardsforuser(String username);
+	public CreditCard getAllCreditCardsForUser(String username);
 	
 }

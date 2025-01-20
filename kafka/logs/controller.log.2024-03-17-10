@@ -1,0 +1,7 @@
+[2024-03-17 11:18:27,188] INFO [QuorumController id=3] In the new epoch 58, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 11:18:27,500] INFO [QuorumController id=3] In the new epoch 59, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 11:18:27,571] INFO [QuorumController id=3] In the new epoch 59, the leader is 2. (org.apache.kafka.controller.QuorumController)
+[2024-03-17 11:32:17,439] INFO [QuorumController id=3] In the new epoch 60, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 11:32:17,503] INFO [QuorumController id=3] In the new epoch 61, the leader is (none). (org.apache.kafka.controller.QuorumController)
+[2024-03-17 11:32:17,593] INFO [QuorumController id=3] Becoming the active controller at epoch 61, next write offset 47793. (org.apache.kafka.controller.QuorumController)
+[2024-03-17 11:32:17,595] WARN [QuorumController id=3] Performing controller activation. Loaded ZK migration state of NONE. (org.apache.kafka.controller.QuorumController)

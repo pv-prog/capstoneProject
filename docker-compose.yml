@@ -1,6 +1,192 @@
 version: '3.9'
 
 services:
+  # Zookeeper service (needed for Kafka)
+  zookeeper:
+    build:
+      context: ./kafka
+      dockerfile: Dockerfile.zookeeper
+    container_name: ccm-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      retries: 5
+    networks:
+      - ccm
+
+  # Kafka service
+  kafka:
+    build:
+      context: ./kafka
+      dockerfile: Dockerfile.kafka
+    container_name: ccm-kafka-broker
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"  # Expose Kafka externally on port 9092
+      - "29092:29092"  # Expose external listener for Kafka (for localhost access)
+      - "9404:9404"  # Expose JMX Exporter on port 9404
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENER_INTERNAL: INSIDE_KAFKA:9093
+      KAFKA_LISTENER_EXTERNAL: INSIDE_KAFKA:9092
+      KAFKA_LISTENER_NAMES: INSIDE,OUTSIDE  # Define listener names
+      KAFKA_LISTENER_SECURITY_PROTOCOL_INSIDE: PLAINTEXT  # Internal listener protocol
+      KAFKA_LISTENER_SECURITY_PROTOCOL_OUTSIDE: PLAINTEXT  # External listener protocol
+      KAFKA_JMX_PORT: 9404  # Expose JMX on port 9404 for Prometheus
+      KAFKA_OPTS: "-javaagent:/opt/kafka/jmx_prometheus_javaagent-0.16.1.jar=9404:/opt/kafka/jmx_exporter.yml"  # Ensure JMX Exporter is mounted and enabled
+    volumes:
+    - ./jmx_exporter/jmx_prometheus_javaagent-0.16.1.jar:/opt/kafka/jmx_prometheus_javaagent-0.16.1.jar  # Mount the JMX Exporter JAR
+    - ./jmx_exporter/jmx_exporter.yml:/opt/kafka/jmx_exporter.yml  # Mount the JMX Exporter configuration file
+    networks:
+      - ccm
+
+# Prometheus Service 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ccm-prometheus
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - "9090:9090"  # Expose Prometheus on port 9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Mount Prometheus config file
+    networks:
+      - ccm
+
+# Grafana Service 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ccm-grafana
+    depends_on:
+      - prometheus  # Ensure Grafana starts after Prometheus
+    ports:
+      - "3001:3001"  # Expose Grafana UI on port 3001
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "admin"  # Set the default admin password
+      GF_AUTH_ANONYMOUS_ENABLED: "false"   # Disable anonymous access (optional)
+      GF_SECURITY_ALLOW_EMBEDDING: "true"  # Allow embedding Grafana dashboards (optional)
+      GF_SERVER_HTTP_PORT: "3001"  # Set internal port to 3001
+    volumes:
+      - grafana_data:/var/lib/grafana  # Persist Grafana data
+      - ./provisioning/datasources:/etc/grafana/provisioning/datasources
+    restart: unless-stopped  # Restart the service if it stops unexpectedly
+    networks:
+      - ccm
+
+  # Kafka UI service (web UI for managing Kafka clusters)
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: ccm-kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8090:8080"  # Expose Kafka UI on port 8090
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - ccm
+
+  # Elasticsearch service
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.4.3  # Use an explicit version tag (latest might cause issues)
+    container_name: ccm-elasticsearch
+    environment:
+      - discovery.type=single-node  # For single-node mode
+      - xpack.security.enabled=false
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    ports:
+      - "9200:9200"  # Expose Elasticsearch on port 9200
+      - "9300:9300"  # Elasticsearch transport port (internal)
+    volumes:
+      - es_data:/usr/share/elasticsearch/data  # Persist Elasticsearch data
+    networks:
+      - ccm
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://elasticsearch:9200/"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+      
+  # elasticsearch-prometheus-exporter
+  elasticsearch-prometheus-exporter:
+    image: bitnami/elasticsearch-exporter:latest
+    container_name: ccm-elasticsearch-prometheus-exporter
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200  # Ensure it's using the correct protocol (http://)
+    command: "--es.uri=http://elasticsearch:9200"  # Ensure the exporter connects to the correct Elasticsearch URL
+    ports:
+      - "9108:9108"
+      - "9114:9114"
+    networks:
+      - ccm
+    depends_on:
+      - elasticsearch
+
+  # Kafka Connect service (standalone mode)
+  kafka-connect:
+    build:
+      context: ./kafka               # Root directory (project-root)
+      dockerfile: Dockerfile.connect   # Reference to the Kafka Connect Dockerfile
+    container_name: ccm-kafka-connect
+    depends_on:
+      - kafka
+      - zookeeper
+    ports:
+      - "8083:8083"  # Expose Kafka Connect REST API
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: "connect-cluster" 
+      CONNECT_CONFIG_STORAGE_TOPIC: "kafka-connect-configs"  
+      CONNECT_OFFSET_STORAGE_TOPIC: "kafka-connect-offsets" 
+      CONNECT_STATUS_STORAGE_TOPIC: "kafka-connect-status" 
+      CONNECT_REPLICATION_FACTOR: 1
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"  # Use container's hostname or IP address
+      CONNECT_PROTOCOL: "org.apache.kafka.connect.runtime.standalone.StandaloneProtocol"  # Specify standalone protocol
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/local/share/kafka/plugins"  # Path for connectors
+      CONNECT_TOPIC: "access-logs,customer-log-topic,creditcard-log-topic,transaction-log-topic" 
+    volumes:
+      # Mount local plugins directory to the container
+      - ./kafka/plugins:/usr/local/share/kafka/plugins
+    networks:
+      - ccm
+
+  # Kibana service
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.4.3
+    container_name: ccm-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"  # Expose Kibana on port 5601
+    networks:
+      - ccm
+
   # Backend service
   backend:
     build:
@@ -8,9 +194,13 @@ services:
       dockerfile: Dockerfile
     container_name: ccm-backend
     ports:
-      - '8090:8090'  # Expose backend on port 8090
+      - '8091:8091'  # Expose backend on port 8091
     networks:
       - ccm  # Connect to the custom network
+    environment:
+      - KAFKA_BROKER=kafka:9092  # Kafka broker address for the backend
+    depends_on:
+      - kafka
 
   # Frontend service
   frontend:
@@ -21,7 +211,7 @@ services:
     ports:
       - '3000:3000'  # Expose frontend on port 3000
     environment:
-      - REACT_APP_API_URL=http://backend:8090  # Set the backend API URL for React
+      - REACT_APP_API_URL=http://backend:8091  # Set the backend API URL for React
     stdin_open: true
     networks:
       - ccm  # Connect to the same custom network
@@ -30,3 +220,11 @@ services:
 networks:
   ccm:
     driver: bridge
+
+volumes:
+  grafana_data:
+    driver: local  # Persistent storage for Grafana data
+  es_data:
+    driver: local  # Persistent storage for Elasticsearch data
+
+

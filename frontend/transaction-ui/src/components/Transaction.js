@@ -11,7 +11,7 @@ const Transaction = ({ transaction, card }) => {
         <div className={`transaction ${transaction.transactionType === "cr" ? "credit" : "debit"}`}>
             {/* Transaction Header */}
             <div className="transaction-header">
-                <h4>Card Number: {card.creditCardNumber}</h4> {/* Display Card Number */}
+                <h4>Card Number: {card.creditCardNumber ? `****-****-****-${card.creditCardNumber.slice(-4)}` : 'N/A'} </h4> {/* Mask all but the last 4 digits of the Card Number, and handle the case if card.creditCardNumber is missing */}
                 <p>Type: {card.wireTransactionVendor.toUpperCase()}</p> {/* Display Vendor in uppercase */}
             </div>
 

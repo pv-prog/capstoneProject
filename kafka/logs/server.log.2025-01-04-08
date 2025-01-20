@@ -1,0 +1,3 @@
+[2025-01-04 08:47:56,865] INFO [GroupCoordinator 0]: Member connect-1-74b4a406-8965-491f-8500-295bd3e50cf9 in group connect-cluster has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
+[2025-01-04 08:47:56,870] INFO [GroupCoordinator 0]: Preparing to rebalance group connect-cluster in state PreparingRebalance with old generation 59 (__consumer_offsets-13) (reason: removing member connect-1-74b4a406-8965-491f-8500-295bd3e50cf9 on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
+[2025-01-04 08:47:56,870] INFO [GroupCoordinator 0]: Group connect-cluster with generation 60 is now empty (__consumer_offsets-13) (kafka.coordinator.group.GroupCoordinator)

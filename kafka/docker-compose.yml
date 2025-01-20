@@ -1,0 +1,69 @@
+services:
+  zookeeper:
+    build:
+      context: .
+      dockerfile: Dockerfile.zookeeper
+    image: kafka-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      retries: 5
+    networks:
+      - kafka-net
+
+  kafka:
+    build:
+      context: .                # Root directory (project-root)
+      dockerfile: Dockerfile.kafka    # Reference to the Kafka Dockerfile
+    image: kafka-broker:latest 
+    container_name: kafka
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENER: INSIDE_KAFKA:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL: PLAINTEXT
+      KAFKA_LISTENER_INTERNAL: INSIDE_KAFKA:9093
+      KAFKA_LISTENER_EXTERNAL: INSIDE_KAFKA:9092
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-net
+
+  kafka-connect:
+    build:
+      context: .                # Root directory (project-root)
+      dockerfile: Dockerfile.connect   # Reference to the Kafka Connect Dockerfile
+    image: kafka-connect:latest
+    container_name: kafka-connect
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: "connect-cluster"
+      CONNECT_CONFIG_STORAGE_TOPIC: "_connect-configs"
+      CONNECT_OFFSET_STORAGE_TOPIC: "_connect-offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "_connect-status"
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
+    ports:
+      - "8083:8083"
+    volumes:
+      # Mount local plugins directory to the container
+      - /Users/a0p07mo/kafka/plugins:/usr/local/share/kafka/plugins
+    depends_on:
+      - kafka
+    networks:
+      - kafka-net
+
+networks:
+  kafka-net:
+    driver: bridge

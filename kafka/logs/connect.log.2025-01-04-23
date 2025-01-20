@@ -1,0 +1,649 @@
+[2025-01-04 23:04:58,302] INFO [Worker clientId=connect-1, groupId=connect-cluster] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: session timed out without receiving a heartbeat response. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:969)
+[2025-01-04 23:04:58,510] INFO [Worker clientId=connect-1, groupId=connect-cluster] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:982)
+[2025-01-04 23:04:58,510] INFO [Worker clientId=connect-1, groupId=connect-cluster] Client requested disconnect from node 2147483647 (org.apache.kafka.clients.NetworkClient:324)
+[2025-01-04 23:04:58,512] INFO [Worker clientId=connect-1, groupId=connect-cluster] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:906)
+[2025-01-04 23:04:58,512] INFO [Worker clientId=connect-1, groupId=connect-cluster] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: coordinator unavailable. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:969)
+[2025-01-04 23:04:58,512] INFO [Worker clientId=connect-1, groupId=connect-cluster] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:982)
+[2025-01-04 23:04:58,616] INFO [Worker clientId=connect-1, groupId=connect-cluster] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:906)
+[2025-01-04 23:04:58,617] WARN [Worker clientId=connect-1, groupId=connect-cluster] consumer poll timeout has expired. This means the time between subsequent calls to poll() was longer than the configured max.poll.interval.ms, which typically implies that the poll loop is spending too much time processing messages. You can address this either by increasing max.poll.interval.ms or by reducing the maximum size of batches returned in poll() with max.poll.records. (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:1481)
+[2025-01-04 23:04:58,617] INFO [Worker clientId=connect-1, groupId=connect-cluster] Member connect-1-cd261a1a-11f9-4456-96da-1a2f6b9c363a sending LeaveGroup request to coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) due to consumer poll timeout has expired. (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:1133)
+[2025-01-04 23:04:58,617] INFO [Worker clientId=connect-1, groupId=connect-cluster] Resetting generation and member id due to: consumer pro-actively leaving the group (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:1025)
+[2025-01-04 23:04:58,617] INFO [Worker clientId=connect-1, groupId=connect-cluster] Rebalance started (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:231)
+[2025-01-04 23:04:58,617] INFO [Worker clientId=connect-1, groupId=connect-cluster] (Re-)joining group (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:576)
+[2025-01-04 23:04:58,659] INFO [Worker clientId=connect-1, groupId=connect-cluster] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:1072)
+[2025-01-04 23:04:58,659] INFO [Worker clientId=connect-1, groupId=connect-cluster] (Re-)joining group (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:576)
+[2025-01-04 23:04:58,660] INFO [Worker clientId=connect-1, groupId=connect-cluster] Successfully joined group with generation Generation{generationId=67, memberId='connect-1-1987fe9e-239b-46bb-a97f-faa13f6dd73a', protocol='sessioned'} (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:637)
+[2025-01-04 23:04:58,662] INFO [Worker clientId=connect-1, groupId=connect-cluster] Successfully synced group in generation Generation{generationId=67, memberId='connect-1-1987fe9e-239b-46bb-a97f-faa13f6dd73a', protocol='sessioned'} (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:812)
+[2025-01-04 23:04:58,662] INFO [Worker clientId=connect-1, groupId=connect-cluster] Joined group at generation 67 with protocol version 2 and got assignment: Assignment{error=0, leader='connect-1-1987fe9e-239b-46bb-a97f-faa13f6dd73a', leaderUrl='http://localhost:8083/', offset=48, connectorIds=[elasticsearch-sink], taskIds=[elasticsearch-sink-0], revokedConnectorIds=[], revokedTaskIds=[], delay=0} with rebalance delay: 0 (org.apache.kafka.connect.runtime.distributed.DistributedHerder:2463)
+[2025-01-04 23:04:58,662] INFO [Worker clientId=connect-1, groupId=connect-cluster] Starting connectors and tasks using config offset 48 (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1823)
+[2025-01-04 23:04:58,662] INFO [Worker clientId=connect-1, groupId=connect-cluster] Starting connector elasticsearch-sink (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1940)
+[2025-01-04 23:04:58,662] INFO [Worker clientId=connect-1, groupId=connect-cluster] Starting task elasticsearch-sink-0 (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1865)
+[2025-01-04 23:04:58,663] INFO [elasticsearch-sink|task-0] Creating task elasticsearch-sink-0 (org.apache.kafka.connect.runtime.Worker:611)
+[2025-01-04 23:04:58,663] INFO [elasticsearch-sink|worker] Creating connector elasticsearch-sink of type io.confluent.connect.elasticsearch.ElasticsearchSinkConnector (org.apache.kafka.connect.runtime.Worker:308)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|worker] SinkConnectorConfig values: 
+	config.action.reload = restart
+	connector.class = io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+	errors.deadletterqueue.context.headers.enable = false
+	errors.deadletterqueue.topic.name = error-topic
+	errors.deadletterqueue.topic.replication.factor = 3
+	errors.log.enable = true
+	errors.log.include.messages = false
+	errors.retry.delay.max.ms = 60000
+	errors.retry.timeout = 0
+	errors.tolerance = all
+	header.converter = null
+	key.converter = class org.apache.kafka.connect.storage.StringConverter
+	name = elasticsearch-sink
+	predicates = []
+	tasks.max = 1
+	topics = [creditcard-log-topic, access-logs]
+	topics.regex = 
+	transforms = []
+	value.converter = class org.apache.kafka.connect.json.JsonConverter
+ (org.apache.kafka.connect.runtime.SinkConnectorConfig:370)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|task-0] ConnectorConfig values: 
+	config.action.reload = restart
+	connector.class = io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+	errors.log.enable = true
+	errors.log.include.messages = false
+	errors.retry.delay.max.ms = 60000
+	errors.retry.timeout = 0
+	errors.tolerance = all
+	header.converter = null
+	key.converter = class org.apache.kafka.connect.storage.StringConverter
+	name = elasticsearch-sink
+	predicates = []
+	tasks.max = 1
+	transforms = []
+	value.converter = class org.apache.kafka.connect.json.JsonConverter
+ (org.apache.kafka.connect.runtime.ConnectorConfig:370)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|task-0] EnrichedConnectorConfig values: 
+	config.action.reload = restart
+	connector.class = io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+	errors.log.enable = true
+	errors.log.include.messages = false
+	errors.retry.delay.max.ms = 60000
+	errors.retry.timeout = 0
+	errors.tolerance = all
+	header.converter = null
+	key.converter = class org.apache.kafka.connect.storage.StringConverter
+	name = elasticsearch-sink
+	predicates = []
+	tasks.max = 1
+	transforms = []
+	value.converter = class org.apache.kafka.connect.json.JsonConverter
+ (org.apache.kafka.connect.runtime.ConnectorConfig$EnrichedConnectorConfig:370)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|worker] EnrichedConnectorConfig values: 
+	config.action.reload = restart
+	connector.class = io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+	errors.deadletterqueue.context.headers.enable = false
+	errors.deadletterqueue.topic.name = error-topic
+	errors.deadletterqueue.topic.replication.factor = 3
+	errors.log.enable = true
+	errors.log.include.messages = false
+	errors.retry.delay.max.ms = 60000
+	errors.retry.timeout = 0
+	errors.tolerance = all
+	header.converter = null
+	key.converter = class org.apache.kafka.connect.storage.StringConverter
+	name = elasticsearch-sink
+	predicates = []
+	tasks.max = 1
+	topics = [creditcard-log-topic, access-logs]
+	topics.regex = 
+	transforms = []
+	value.converter = class org.apache.kafka.connect.json.JsonConverter
+ (org.apache.kafka.connect.runtime.ConnectorConfig$EnrichedConnectorConfig:370)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|task-0] TaskConfig values: 
+	task.class = class io.confluent.connect.elasticsearch.ElasticsearchSinkTask
+ (org.apache.kafka.connect.runtime.TaskConfig:370)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|task-0] Instantiated task elasticsearch-sink-0 with version 14.1.2 of type io.confluent.connect.elasticsearch.ElasticsearchSinkTask (org.apache.kafka.connect.runtime.Worker:625)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|worker] Instantiated connector elasticsearch-sink with version 14.1.2 of type class io.confluent.connect.elasticsearch.ElasticsearchSinkConnector (org.apache.kafka.connect.runtime.Worker:330)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|task-0] StringConverterConfig values: 
+	converter.encoding = UTF-8
+	converter.type = key
+ (org.apache.kafka.connect.storage.StringConverterConfig:370)
+[2025-01-04 23:04:58,664] INFO [elasticsearch-sink|worker] Finished creating connector elasticsearch-sink (org.apache.kafka.connect.runtime.Worker:351)
+[2025-01-04 23:04:58,665] INFO [elasticsearch-sink|task-0] JsonConverterConfig values: 
+	converter.type = value
+	decimal.format = BASE64
+	replace.null.with.default = true
+	schemas.cache.size = 1000
+	schemas.enable = false
+ (org.apache.kafka.connect.json.JsonConverterConfig:370)
+[2025-01-04 23:04:58,665] INFO [elasticsearch-sink|worker] ElasticsearchSinkConnectorConfig values: 
+	batch.size = 500
+	behavior.on.malformed.documents = FAIL
+	behavior.on.null.values = FAIL
+	bulk.size.bytes = 5242880
+	compact.map.entries = true
+	connection.compression = false
+	connection.password = null
+	connection.timeout.ms = 1000
+	connection.url = [http://localhost:9200]
+	connection.username = null
+	data.stream.dataset = 
+	data.stream.namespace = ${topic}
+	data.stream.timestamp.field = []
+	data.stream.type = NONE
+	drop.invalid.message = false
+	elastic.https.ssl.cipher.suites = null
+	elastic.https.ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	elastic.https.ssl.endpoint.identification.algorithm = https
+	elastic.https.ssl.engine.factory.class = null
+	elastic.https.ssl.key.password = null
+	elastic.https.ssl.keymanager.algorithm = SunX509
+	elastic.https.ssl.keystore.certificate.chain = null
+	elastic.https.ssl.keystore.key = null
+	elastic.https.ssl.keystore.location = null
+	elastic.https.ssl.keystore.password = null
+	elastic.https.ssl.keystore.type = JKS
+	elastic.https.ssl.protocol = TLSv1.3
+	elastic.https.ssl.provider = null
+	elastic.https.ssl.secure.random.implementation = null
+	elastic.https.ssl.trustmanager.algorithm = PKIX
+	elastic.https.ssl.truststore.certificates = null
+	elastic.https.ssl.truststore.location = null
+	elastic.https.ssl.truststore.password = null
+	elastic.https.ssl.truststore.type = JKS
+	elastic.security.protocol = PLAINTEXT
+	external.version.header = 
+	flush.synchronously = false
+	flush.timeout.ms = 180000
+	kerberos.keytab.path = null
+	kerberos.user.principal = null
+	key.ignore = true
+	linger.ms = 1
+	max.buffered.records = 20000
+	max.connection.idle.time.ms = 60000
+	max.in.flight.requests = 5
+	max.retries = 5
+	proxy.host = 
+	proxy.password = null
+	proxy.port = 8080
+	proxy.username = 
+	read.timeout.ms = 3000
+	retry.backoff.ms = 100
+	schema.ignore = true
+	topic.key.ignore = []
+	topic.schema.ignore = []
+	use.autogenerated.ids = false
+	write.method = INSERT
+ (io.confluent.connect.elasticsearch.ElasticsearchSinkConnectorConfig:370)
+[2025-01-04 23:04:58,665] INFO [elasticsearch-sink|task-0] Set up the key converter class org.apache.kafka.connect.storage.StringConverter for task elasticsearch-sink-0 using the connector config (org.apache.kafka.connect.runtime.Worker:640)
+[2025-01-04 23:04:58,665] INFO [elasticsearch-sink|task-0] Set up the value converter class org.apache.kafka.connect.json.JsonConverter for task elasticsearch-sink-0 using the connector config (org.apache.kafka.connect.runtime.Worker:646)
+[2025-01-04 23:04:58,665] INFO [elasticsearch-sink|task-0] Set up the header converter class org.apache.kafka.connect.storage.SimpleHeaderConverter for task elasticsearch-sink-0 using the worker config (org.apache.kafka.connect.runtime.Worker:651)
+[2025-01-04 23:04:58,665] INFO [elasticsearch-sink|task-0] Initializing: org.apache.kafka.connect.runtime.TransformationChain{} (org.apache.kafka.connect.runtime.Worker:1798)
+[2025-01-04 23:04:58,665] INFO [elasticsearch-sink|task-0] SinkConnectorConfig values: 
+	config.action.reload = restart
+	connector.class = io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+	errors.deadletterqueue.context.headers.enable = false
+	errors.deadletterqueue.topic.name = error-topic
+	errors.deadletterqueue.topic.replication.factor = 3
+	errors.log.enable = true
+	errors.log.include.messages = false
+	errors.retry.delay.max.ms = 60000
+	errors.retry.timeout = 0
+	errors.tolerance = all
+	header.converter = null
+	key.converter = class org.apache.kafka.connect.storage.StringConverter
+	name = elasticsearch-sink
+	predicates = []
+	tasks.max = 1
+	topics = [creditcard-log-topic, access-logs]
+	topics.regex = 
+	transforms = []
+	value.converter = class org.apache.kafka.connect.json.JsonConverter
+ (org.apache.kafka.connect.runtime.SinkConnectorConfig:370)
+[2025-01-04 23:04:58,665] INFO [elasticsearch-sink|task-0] EnrichedConnectorConfig values: 
+	config.action.reload = restart
+	connector.class = io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+	errors.deadletterqueue.context.headers.enable = false
+	errors.deadletterqueue.topic.name = error-topic
+	errors.deadletterqueue.topic.replication.factor = 3
+	errors.log.enable = true
+	errors.log.include.messages = false
+	errors.retry.delay.max.ms = 60000
+	errors.retry.timeout = 0
+	errors.tolerance = all
+	header.converter = null
+	key.converter = class org.apache.kafka.connect.storage.StringConverter
+	name = elasticsearch-sink
+	predicates = []
+	tasks.max = 1
+	topics = [creditcard-log-topic, access-logs]
+	topics.regex = 
+	transforms = []
+	value.converter = class org.apache.kafka.connect.json.JsonConverter
+ (org.apache.kafka.connect.runtime.ConnectorConfig$EnrichedConnectorConfig:370)
+[2025-01-04 23:04:58,666] INFO [elasticsearch-sink|task-0] ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = connector-consumer-elasticsearch-sink-0
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = connect-elasticsearch-sink
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+ (org.apache.kafka.clients.consumer.ConsumerConfig:370)
+[2025-01-04 23:04:58,672] INFO [elasticsearch-sink|task-0] These configurations '[metrics.context.connect.kafka.cluster.id, metrics.context.connect.group.id]' were supplied but are not used yet. (org.apache.kafka.clients.consumer.ConsumerConfig:379)
+[2025-01-04 23:04:58,672] INFO [elasticsearch-sink|task-0] Kafka version: 3.6.0 (org.apache.kafka.common.utils.AppInfoParser:119)
+[2025-01-04 23:04:58,672] INFO [elasticsearch-sink|task-0] Kafka commitId: 60e845626d8a465a (org.apache.kafka.common.utils.AppInfoParser:120)
+[2025-01-04 23:04:58,672] INFO [elasticsearch-sink|task-0] Kafka startTimeMs: 1736012098672 (org.apache.kafka.common.utils.AppInfoParser:121)
+[2025-01-04 23:04:58,673] INFO [Worker clientId=connect-1, groupId=connect-cluster] Finished starting connectors and tasks (org.apache.kafka.connect.runtime.distributed.DistributedHerder:1851)
+[2025-01-04 23:04:58,673] INFO [elasticsearch-sink|task-0] AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.servers = [localhost:9092]
+	client.dns.lookup = use_all_dns_ips
+	client.id = connector-dlq-adminclient-
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+ (org.apache.kafka.clients.admin.AdminClientConfig:370)
+[2025-01-04 23:04:58,673] INFO SinkConnectorConfig values: 
+	config.action.reload = restart
+	connector.class = io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+	errors.deadletterqueue.context.headers.enable = false
+	errors.deadletterqueue.topic.name = error-topic
+	errors.deadletterqueue.topic.replication.factor = 3
+	errors.log.enable = true
+	errors.log.include.messages = false
+	errors.retry.delay.max.ms = 60000
+	errors.retry.timeout = 0
+	errors.tolerance = all
+	header.converter = null
+	key.converter = class org.apache.kafka.connect.storage.StringConverter
+	name = elasticsearch-sink
+	predicates = []
+	tasks.max = 1
+	topics = [creditcard-log-topic, access-logs]
+	topics.regex = 
+	transforms = []
+	value.converter = class org.apache.kafka.connect.json.JsonConverter
+ (org.apache.kafka.connect.runtime.SinkConnectorConfig:370)
+[2025-01-04 23:04:58,673] INFO EnrichedConnectorConfig values: 
+	config.action.reload = restart
+	connector.class = io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+	errors.deadletterqueue.context.headers.enable = false
+	errors.deadletterqueue.topic.name = error-topic
+	errors.deadletterqueue.topic.replication.factor = 3
+	errors.log.enable = true
+	errors.log.include.messages = false
+	errors.retry.delay.max.ms = 60000
+	errors.retry.timeout = 0
+	errors.tolerance = all
+	header.converter = null
+	key.converter = class org.apache.kafka.connect.storage.StringConverter
+	name = elasticsearch-sink
+	predicates = []
+	tasks.max = 1
+	topics = [creditcard-log-topic, access-logs]
+	topics.regex = 
+	transforms = []
+	value.converter = class org.apache.kafka.connect.json.JsonConverter
+ (org.apache.kafka.connect.runtime.ConnectorConfig$EnrichedConnectorConfig:370)
+[2025-01-04 23:04:58,674] INFO [elasticsearch-sink|task-0] These configurations '[config.storage.topic, listeners, metrics.context.connect.group.id, status.storage.topic, group.id, plugin.path, config.storage.replication.factor, offset.flush.interval.ms, key.converter.schemas.enable, metrics.context.connect.kafka.cluster.id, status.storage.replication.factor, value.converter.schemas.enable, offset.storage.replication.factor, offset.storage.topic, value.converter, key.converter]' were supplied but are not used yet. (org.apache.kafka.clients.admin.AdminClientConfig:379)
+[2025-01-04 23:04:58,674] INFO [elasticsearch-sink|task-0] Kafka version: 3.6.0 (org.apache.kafka.common.utils.AppInfoParser:119)
+[2025-01-04 23:04:58,674] INFO [elasticsearch-sink|task-0] Kafka commitId: 60e845626d8a465a (org.apache.kafka.common.utils.AppInfoParser:120)
+[2025-01-04 23:04:58,674] INFO [elasticsearch-sink|task-0] Kafka startTimeMs: 1736012098674 (org.apache.kafka.common.utils.AppInfoParser:121)
+[2025-01-04 23:04:58,677] INFO [elasticsearch-sink|task-0] App info kafka.admin.client for connector-dlq-adminclient- unregistered (org.apache.kafka.common.utils.AppInfoParser:83)
+[2025-01-04 23:04:58,677] INFO [elasticsearch-sink|task-0] Metrics scheduler closed (org.apache.kafka.common.metrics.Metrics:693)
+[2025-01-04 23:04:58,677] INFO [elasticsearch-sink|task-0] Closing reporter org.apache.kafka.common.metrics.JmxReporter (org.apache.kafka.common.metrics.Metrics:697)
+[2025-01-04 23:04:58,677] INFO [elasticsearch-sink|task-0] Metrics reporters closed (org.apache.kafka.common.metrics.Metrics:703)
+[2025-01-04 23:04:58,677] INFO [elasticsearch-sink|task-0] ProducerConfig values: 
+	acks = -1
+	auto.include.jmx.reporter = true
+	batch.size = 16384
+	bootstrap.servers = [localhost:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = use_all_dns_ips
+	client.id = connector-dlq-producer-elasticsearch-sink-0
+	compression.type = none
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 2147483647
+	enable.idempotence = false
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.ByteArraySerializer
+	linger.ms = 0
+	max.block.ms = 9223372036854775807
+	max.in.flight.requests.per.connection = 1
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.adaptive.partitioning.enable = true
+	partitioner.availability.timeout.ms = 0
+	partitioner.class = null
+	partitioner.ignore.keys = false
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transactional.id = null
+	value.serializer = class org.apache.kafka.common.serialization.ByteArraySerializer
+ (org.apache.kafka.clients.producer.ProducerConfig:370)
+[2025-01-04 23:04:58,678] INFO [elasticsearch-sink|task-0] These configurations '[metrics.context.connect.kafka.cluster.id, metrics.context.connect.group.id]' were supplied but are not used yet. (org.apache.kafka.clients.producer.ProducerConfig:379)
+[2025-01-04 23:04:58,679] INFO [elasticsearch-sink|task-0] Kafka version: 3.6.0 (org.apache.kafka.common.utils.AppInfoParser:119)
+[2025-01-04 23:04:58,679] INFO [elasticsearch-sink|task-0] Kafka commitId: 60e845626d8a465a (org.apache.kafka.common.utils.AppInfoParser:120)
+[2025-01-04 23:04:58,679] INFO [elasticsearch-sink|task-0] Kafka startTimeMs: 1736012098679 (org.apache.kafka.common.utils.AppInfoParser:121)
+[2025-01-04 23:04:58,679] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Subscribed to topic(s): creditcard-log-topic, access-logs (org.apache.kafka.clients.consumer.KafkaConsumer:912)
+[2025-01-04 23:04:58,679] INFO [elasticsearch-sink|task-0] Starting ElasticsearchSinkTask. (io.confluent.connect.elasticsearch.ElasticsearchSinkTask:59)
+[2025-01-04 23:04:58,679] INFO [elasticsearch-sink|task-0] ElasticsearchSinkConnectorConfig values: 
+	batch.size = 500
+	behavior.on.malformed.documents = FAIL
+	behavior.on.null.values = FAIL
+	bulk.size.bytes = 5242880
+	compact.map.entries = true
+	connection.compression = false
+	connection.password = null
+	connection.timeout.ms = 1000
+	connection.url = [http://localhost:9200]
+	connection.username = null
+	data.stream.dataset = 
+	data.stream.namespace = ${topic}
+	data.stream.timestamp.field = []
+	data.stream.type = NONE
+	drop.invalid.message = false
+	elastic.https.ssl.cipher.suites = null
+	elastic.https.ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	elastic.https.ssl.endpoint.identification.algorithm = https
+	elastic.https.ssl.engine.factory.class = null
+	elastic.https.ssl.key.password = null
+	elastic.https.ssl.keymanager.algorithm = SunX509
+	elastic.https.ssl.keystore.certificate.chain = null
+	elastic.https.ssl.keystore.key = null
+	elastic.https.ssl.keystore.location = null
+	elastic.https.ssl.keystore.password = null
+	elastic.https.ssl.keystore.type = JKS
+	elastic.https.ssl.protocol = TLSv1.3
+	elastic.https.ssl.provider = null
+	elastic.https.ssl.secure.random.implementation = null
+	elastic.https.ssl.trustmanager.algorithm = PKIX
+	elastic.https.ssl.truststore.certificates = null
+	elastic.https.ssl.truststore.location = null
+	elastic.https.ssl.truststore.password = null
+	elastic.https.ssl.truststore.type = JKS
+	elastic.security.protocol = PLAINTEXT
+	external.version.header = 
+	flush.synchronously = false
+	flush.timeout.ms = 180000
+	kerberos.keytab.path = null
+	kerberos.user.principal = null
+	key.ignore = true
+	linger.ms = 1
+	max.buffered.records = 20000
+	max.connection.idle.time.ms = 60000
+	max.in.flight.requests = 5
+	max.retries = 5
+	proxy.host = 
+	proxy.password = null
+	proxy.port = 8080
+	proxy.username = 
+	read.timeout.ms = 3000
+	retry.backoff.ms = 100
+	schema.ignore = true
+	topic.key.ignore = []
+	topic.schema.ignore = []
+	use.autogenerated.ids = false
+	write.method = INSERT
+ (io.confluent.connect.elasticsearch.ElasticsearchSinkConnectorConfig:370)
+[2025-01-04 23:04:58,679] INFO [elasticsearch-sink|task-0] [Producer clientId=connector-dlq-producer-elasticsearch-sink-0] Cluster ID: TKaSnd2ORFao_Ic5yNH2AA (org.apache.kafka.clients.Metadata:287)
+[2025-01-04 23:04:58,680] INFO [elasticsearch-sink|task-0] Using unsecured connection to [http://localhost:9200]. (io.confluent.connect.elasticsearch.ConfigCallbackHandler:115)
+[2025-01-04 23:04:58,706] INFO [elasticsearch-sink|task-0] Staring client in ES 8 compatibility mode (io.confluent.connect.elasticsearch.ElasticsearchClient:151)
+[2025-01-04 23:04:58,708] INFO [elasticsearch-sink|task-0] Started ElasticsearchSinkTask. Connecting to ES server version: 8.17.0 (io.confluent.connect.elasticsearch.ElasticsearchSinkTask:91)
+[2025-01-04 23:04:58,708] INFO [elasticsearch-sink|task-0] WorkerSinkTask{id=elasticsearch-sink-0} Sink task finished initialization and start (org.apache.kafka.connect.runtime.WorkerSinkTask:322)
+[2025-01-04 23:04:58,708] INFO [elasticsearch-sink|task-0] WorkerSinkTask{id=elasticsearch-sink-0} Executing sink task (org.apache.kafka.connect.runtime.WorkerSinkTask:206)
+[2025-01-04 23:04:58,710] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Cluster ID: TKaSnd2ORFao_Ic5yNH2AA (org.apache.kafka.clients.Metadata:287)
+[2025-01-04 23:04:58,710] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:906)
+[2025-01-04 23:04:58,711] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] (Re-)joining group (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:576)
+[2025-01-04 23:04:58,712] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Request joining group due to: need to re-join with the given member-id: connector-consumer-elasticsearch-sink-0-5f40b112-4514-49d7-984a-27b7c303e61b (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:1072)
+[2025-01-04 23:04:58,712] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:1072)
+[2025-01-04 23:04:58,713] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] (Re-)joining group (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:576)
+[2025-01-04 23:04:58,713] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Successfully joined group with generation Generation{generationId=5, memberId='connector-consumer-elasticsearch-sink-0-5f40b112-4514-49d7-984a-27b7c303e61b', protocol='range'} (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:637)
+[2025-01-04 23:04:58,713] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Finished assignment for group at generation 5: {connector-consumer-elasticsearch-sink-0-5f40b112-4514-49d7-984a-27b7c303e61b=Assignment(partitions=[creditcard-log-topic-0, access-logs-0])} (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:717)
+[2025-01-04 23:04:58,714] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Successfully synced group in generation Generation{generationId=5, memberId='connector-consumer-elasticsearch-sink-0-5f40b112-4514-49d7-984a-27b7c303e61b', protocol='range'} (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:812)
+[2025-01-04 23:04:58,714] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Notifying assignor about the new Assignment(partitions=[creditcard-log-topic-0, access-logs-0]) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:312)
+[2025-01-04 23:04:58,714] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Adding newly assigned partitions: access-logs-0, creditcard-log-topic-0 (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:324)
+[2025-01-04 23:04:58,717] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Setting offset for partition creditcard-log-topic-0 to the committed offset FetchPosition{offset=2, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.25:9092 (id: 0 rack: null)], epoch=0}} (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:980)
+[2025-01-04 23:04:58,718] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Setting offset for partition access-logs-0 to the committed offset FetchPosition{offset=16, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.25:9092 (id: 0 rack: null)], epoch=0}} (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:980)
+[2025-01-04 23:22:10,686] INFO [Worker clientId=connect-1, groupId=connect-cluster] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: session timed out without receiving a heartbeat response. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:969)
+[2025-01-04 23:22:10,687] INFO [Worker clientId=connect-1, groupId=connect-cluster] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:982)
+[2025-01-04 23:22:10,688] INFO [Worker clientId=connect-1, groupId=connect-cluster] Client requested disconnect from node 2147483647 (org.apache.kafka.clients.NetworkClient:324)
+[2025-01-04 23:22:10,692] INFO [Worker clientId=connect-1, groupId=connect-cluster] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:906)
+[2025-01-04 23:22:10,755] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: session timed out without receiving a heartbeat response. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:969)
+[2025-01-04 23:22:10,897] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:982)
+[2025-01-04 23:22:10,897] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Client requested disconnect from node 2147483647 (org.apache.kafka.clients.NetworkClient:324)
+[2025-01-04 23:22:10,898] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:906)
+[2025-01-04 23:22:10,899] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: coordinator unavailable. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:969)
+[2025-01-04 23:22:10,899] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:982)
+[2025-01-04 23:22:11,008] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:906)
+[2025-01-04 23:26:31,655] INFO [Worker clientId=connect-1, groupId=connect-cluster] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: session timed out without receiving a heartbeat response. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:969)
+[2025-01-04 23:26:31,761] INFO [Worker clientId=connect-1, groupId=connect-cluster] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:982)
+[2025-01-04 23:26:31,655] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: session timed out without receiving a heartbeat response. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:969)
+[2025-01-04 23:26:31,762] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:982)
+[2025-01-04 23:26:31,762] INFO [Worker clientId=connect-1, groupId=connect-cluster] Client requested disconnect from node 2147483647 (org.apache.kafka.clients.NetworkClient:324)
+[2025-01-04 23:26:31,770] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Client requested disconnect from node 2147483647 (org.apache.kafka.clients.NetworkClient:324)
+[2025-01-04 23:26:31,866] INFO [Worker clientId=connect-1, groupId=connect-cluster] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:906)
+[2025-01-04 23:26:31,866] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:906)
+[2025-01-04 23:26:31,866] INFO [Worker clientId=connect-1, groupId=connect-cluster] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: coordinator unavailable. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:969)
+[2025-01-04 23:26:31,866] INFO [Worker clientId=connect-1, groupId=connect-cluster] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:982)
+[2025-01-04 23:26:31,866] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: coordinator unavailable. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:969)
+[2025-01-04 23:26:31,866] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:982)
+[2025-01-04 23:26:31,969] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:906)
+[2025-01-04 23:26:31,972] INFO [Worker clientId=connect-1, groupId=connect-cluster] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:906)
+[2025-01-04 23:44:29,656] INFO [Worker clientId=connect-1, groupId=connect-cluster] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: session timed out without receiving a heartbeat response. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:969)
+[2025-01-04 23:44:29,749] INFO [Worker clientId=connect-1, groupId=connect-cluster] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:982)
+[2025-01-04 23:44:29,750] INFO [Worker clientId=connect-1, groupId=connect-cluster] Client requested disconnect from node 2147483647 (org.apache.kafka.clients.NetworkClient:324)
+[2025-01-04 23:44:29,751] INFO [Worker clientId=connect-1, groupId=connect-cluster] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.connect.runtime.distributed.WorkerCoordinator:906)
+[2025-01-04 23:44:29,808] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: session timed out without receiving a heartbeat response. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:969)
+[2025-01-04 23:44:29,861] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:982)
+[2025-01-04 23:44:29,861] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Client requested disconnect from node 2147483647 (org.apache.kafka.clients.NetworkClient:324)
+[2025-01-04 23:44:29,862] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:906)
+[2025-01-04 23:44:29,862] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) is unavailable or invalid due to cause: coordinator unavailable. isDisconnected: false. Rediscovery will be attempted. (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:969)
+[2025-01-04 23:44:29,862] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Requesting disconnect from last known coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:982)
+[2025-01-04 23:44:29,867] INFO [Worker clientId=connect-1, groupId=connect-cluster] Session key updated (org.apache.kafka.connect.runtime.distributed.DistributedHerder:2331)
+[2025-01-04 23:44:29,968] INFO [elasticsearch-sink|task-0] [Consumer clientId=connector-consumer-elasticsearch-sink-0, groupId=connect-elasticsearch-sink] Discovered group coordinator 192.168.1.25:9092 (id: 2147483647 rack: null) (org.apache.kafka.clients.consumer.internals.ConsumerCoordinator:906)

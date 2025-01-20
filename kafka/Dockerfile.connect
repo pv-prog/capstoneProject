@@ -1,0 +1,16 @@
+# Use OpenJDK as base image since Kafka Connect requires Java
+FROM openjdk:11-jre-slim
+
+# Set the working directory inside the container
+WORKDIR /opt/kafka-connect
+
+# Copy the Kafka Connect setup (bin, config, and libs) into the container
+COPY ./bin /opt/kafka-connect/bin
+COPY ./config /opt/kafka-connect/config
+COPY ./libs /opt/kafka-connect/libs
+
+# Expose Kafka Connect port
+EXPOSE 8083
+
+# Set the default command to start Kafka Connect
+CMD ["/opt/kafka-connect/bin/connect-distributed.sh", "/opt/kafka-connect/config/connect-distributed.properties"]

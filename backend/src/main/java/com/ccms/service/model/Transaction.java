@@ -43,8 +43,6 @@ public class Transaction {
 		private double transactionAmount;
 		private String transactionDesc;
 
-		
-
 	}
 
 }

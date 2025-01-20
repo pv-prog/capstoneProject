@@ -1,0 +1,16 @@
+# Use OpenJDK as base image since Kafka requires Java
+FROM openjdk:11-jre-slim
+
+# Set the working directory inside the container
+WORKDIR /opt/kafka
+
+# Copy the Kafka setup (including bin and config directories) into the container
+COPY ./bin /opt/kafka/bin
+COPY ./config /opt/kafka/config
+COPY ./libs /opt/kafka/libs
+
+# Expose Kafka and ZooKeeper ports
+EXPOSE 9092 2181 9093
+
+# Set the default command to start Kafka
+CMD ["/opt/kafka/bin/kafka-server-start.sh", "/opt/kafka/config/server.properties"]

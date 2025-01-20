@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import React, { useState } from 'react';
 import Toastify from 'toastify-js';
 import './CreditCard.css'; // Import your CSS for styling
 import Txn from './Txn'; // Import the Transaction component
@@ -34,6 +34,7 @@ const getRandomGradient = (cardType) => {
 
 const CreditCard = ({ card, user, isAddCard }) => {
     const [showCvv, setShowCvv] = useState(false); // State to toggle CVV visibility
+    const [showCardNumber, setShowCardNumber] = useState(false); // State to toggle Card Number visibility
     const [isActive, setIsActive] = useState(card.status === 'enabled'); // Initialize based on card status
     const [transactions, setTransactions] = useState([]); // State for storing fetched transactions
     const [loadingTransactions, setLoadingTransactions] = useState(false); // Loading state for transactions
@@ -45,11 +46,17 @@ const CreditCard = ({ card, user, isAddCard }) => {
         setShowCvv(!showCvv);
     };
 
+    // Function to toggle Card Number visibility
+    const handleToggleCardNumber = (e) => {
+        e.stopPropagation();
+        setShowCardNumber(!showCardNumber);
+    };
+    
     // Function to toggle card status (enabled/disabled)
     const handleToggleStatus = async () => {
         try {
             // Toggle the card status via the API
-            const response = await axios.put(`/api/customer/creditcard/${user.username}/${card.creditCardId}/toggle`);
+            const response = await axios.put(`/api/customer/creditcard/togglecreditcard/${user.username}/${card.creditCardId}/toggle`);
             if (response.status === 200) {
                 // Toggle the card's active state
                 const newStatus = !isActive;
@@ -140,6 +147,12 @@ const CreditCard = ({ card, user, isAddCard }) => {
     const gradientBackground = getRandomGradient(card.wireTransactionVendor);
     const cardStatusBackground = isActive ? 'green' : 'red'; // Green for active, red for disabled
 
+    // Mask the card number if not visible
+    const maskedCardNumber = card.creditCardNumber
+        ? `**** **** **** ${card.creditCardNumber.slice(-4)}`
+        : '';
+
+
     return (
         <div className="credit-card" style={{ background: gradientBackground }}>
             <div className="card-details" onClick={handleToggleTransactions}>
@@ -147,7 +160,10 @@ const CreditCard = ({ card, user, isAddCard }) => {
                 <div className="card-status" style={{ backgroundColor: cardStatusBackground }}>
                     {isActive ? 'Active' : 'Disabled'}
                 </div>
-                <p className="card-number">{card.creditCardNumber}</p>
+                <p className="card-number">{showCardNumber ? card.creditCardNumber : maskedCardNumber}</p>
+                <button className="show-cardnumber-button" onClick={handleToggleCardNumber}>
+                            {showCardNumber ? 'Hide Card Number' : 'Show Card Number'}
+                </button>           
                 <div className="card-info">
                     <p className="expiry">Expiry: {card.expiryMonth}/{card.expiryYear}</p>
                     <div className="cvv-container">

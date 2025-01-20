@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 15s  # Scrape metrics every 15 seconds globally
+
+scrape_configs:
+  - job_name: 'kafka'  # Job name for Kafka metrics
+    static_configs:
+      - targets: ['kafka:9404']  # Kafka JMX Exporter running on port 9404
+    metrics_path: '/metrics'  # Path for Kafka metrics
+    scheme: 'http'  # Using HTTP to scrape Kafka metrics
+    scrape_interval: 15s  # Scrape Kafka metrics every 15 seconds
+  
+  - job_name: 'backend'
+    static_configs:
+      - targets: ['ccm-backend:8091']
+    metrics_path: '/actuator/prometheus'  # Ensure this path matches the one your backend exposes
+    scrape_interval: 15s  # How often Prometheus scrapes the metrics
+    scrape_timeout: 10s   # Timeout for scraping metrics
+
+  - job_name: 'elasticsearch'
+    static_configs:
+      - targets: ['elasticsearch-prometheus-exporter:9114']
+    metrics_path: '/metrics'
+    scheme: 'http'
+    scrape_interval: 15s
+

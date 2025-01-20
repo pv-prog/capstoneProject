@@ -1,0 +1,17 @@
+# Use OpenJDK as base image since ZooKeeper requires Java
+FROM openjdk:11-jre-slim
+
+# Set the working directory inside the container
+WORKDIR /opt/zookeeper
+
+# Copy the ZooKeeper setup (bin, config, and libs) into the container
+COPY ./bin /opt/zookeeper/bin
+COPY ./config /opt/zookeeper/config
+COPY ./libs /opt/zookeeper/libs
+
+# Expose ZooKeeper port
+EXPOSE 2181
+
+# Set the default command to start ZooKeeper
+CMD ["/opt/zookeeper/bin/zookeeper-server-start.sh", "/opt/zookeeper/config/zookeeper.properties"]
+
