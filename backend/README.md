@@ -68,40 +68,58 @@ Transaction Object
 ### GET /api/customer/transactions/maxExpenses/lastMonth
 ### Url
 ```
-http://{hostname}/api/customer/transactions/maxExpenses/lastMonth/{username}
+http://{hostname}/api/customer/transactions/maxExpenses/lastMonth/{Base64-Encoded-username}
 ```
-**URL Params:** username
+**URL Params:** Base64-Encoded-username
 
 **Success Response:**
 
 Code: 200
 Content: 
 ```
-[
-  {
-    "credit_card": "5108-7587-6710-8221",
-    "month": "NOV",
-    "amount": 222204.6
+{
+  "content": [
+    {
+      "credit_card": "****-****-****-1230",
+      "month": "DEC",
+      "amount": 6872.46
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 100,
+    "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
   },
-  {
-    "credit_card": "5048-3787-4861-6649",
-    "month": "NOV",
-    "amount": 1235.92
+  "totalElements": 1,
+  "totalPages": 1,
+  "last": true,
+  "size": 100,
+  "number": 0,
+  "sort": {
+    "empty": false,
+    "sorted": true,
+    "unsorted": false
   },
-  {
-    "credit_card": "5108-7594-1855-6222",
-    "month": "NOV",
-    "amount": 125.92
-  }
-]
+  "numberOfElements": 1,
+  "first": true,
+  "empty": false
+}
+
 ```
 ### 2. User Story: list the expenses more than the amount of expenses
 ### GET /api/customer/transactions/highvalue/expenses
 ### Url
 ```
-http://{hostname}/api/customer/transactions/highvalue/expenses/{username}?limit={limit}&status={status}&amountThreshold={amountThreshold}
+http://{hostname}/api/customer/transactions/highvalue/expenses/{Base64-Encoded-username}?limit={limit}&status={status}&amountThreshold={amountThreshold}
 ```
-**URL Params:** username , limit, status, amountThreshold
+**URL Params:** Base64-Encoded-username , limit, status, amountThreshold
 
 **Success Response:**
 
@@ -142,9 +160,9 @@ Content:
 ### POST /api/customer/creditcard/{username}
 ### Url
 ```
-http://{hostname}/api/customer/creditcard/{username}
+http://{hostname}/api/customer/creditcard/{Base64-Encoded-username}
 ```
-**URL Params:** username
+**URL Params:** Base64-Encoded-username
 
 **Request Params:** creditCardNumber , expiryMonth , expiryYear , cvv , wireTransactionVendor
 
@@ -184,73 +202,60 @@ Content:
 }
 ```
 ### 4. User Story: when customer wants to view last x number of expenses of all cards
-### GET /api/customer/transactions/lastXExpenses/{username}
+### GET /api/customer/transactions/lastXExpenses/{Base64-Encoded-username}
 ### Url
 ```
 http://{hostname}/api/customer/transactions/lastXExpenses/achilleyb?limit={limit}&status=both
 ```
-**URL Params:** username , limit value
+**URL Params:** Base64-Encoded-username , limit value
 
 **Success Response:**
 
 Code: 200
 Content:
 ```
-[
-  {
-    "credit_card": "5108758767108221",
-    "transactions": [
-      {
-        "month": "DEC",
-        "amount": 6872.46,
-        "description": "Electronics"
-      },
-      {
-        "month": "NOV",
-        "amount": 3428.97,
-        "description": "Food"
-      },
-      {
-        "month": "NOV",
-        "amount": 222204.6,
-        "description": "Clothing"
-      },
-      {
-        "month": "JUN",
-        "amount": 240082.03,
-        "description": "Clothing"
-      },
-      {
-        "month": "JUN",
-        "amount": 1463.69,
-        "description": "Groceries"
-      },
-      {
-        "month": "JAN",
-        "amount": 701.25,
-        "description": "Food"
-      }
-    ]
-  },
-  {
-    "credit_card": "5048378748616649",
-    "transactions": [
-      {
-        "month": "NOV",
-        "amount": 1235.92,
-        "description": "Food"
-      }
-    ]
-  },
-  {
-    "credit_card": "5108759418556222",
-    "transactions": [
-      {
-        "month": "NOV",
-        "amount": 125.92,
-        "description": "Food"
-      }
-    ]
+{
+  "content": [
+    {
+      "credit_card": "****-****-****-1230",
+      "transactions": [
+        {
+          "month": "DEC",
+          "amount": 6872.46,
+          "description": "Electronics"
+        }
+      ]
+    },
+    {
+      "credit_card": "****-****-****-5692",
+      "transactions": [
+        {
+          "month": "NOV",
+          "amount": 1235.92,
+          "description": "Food"
+        }
+      ]
+    },
+    {
+      "credit_card": "****-****-****-1213",
+      "transactions": [
+        {
+          "month": "NOV",
+          "amount": 125.92,
+          "description": "Food"
+        }
+      ]
+    }
+  ],
+  "totalElements": 3,
+  "totalPages": 1,
+  "pageable": {
+    "pageSize": 100,
+    "pageNumber": 0,
+    "sort": {
+      "sorted": true,
+      "unsorted": false
+    }
   }
-]
+}
 ```
