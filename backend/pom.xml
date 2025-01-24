@@ -30,8 +30,6 @@
 		<java.version>17</java.version>
 		<spring-boot.version>3.0.12</spring-boot.version>
 		<spring-cloud.version>2022.0.5</spring-cloud.version>
-	</properties>
-	<properties>
   		<sonar.organization>ascendteam2</sonar.organization>
   		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
